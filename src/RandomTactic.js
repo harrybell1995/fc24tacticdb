@@ -3,7 +3,7 @@ import supabase from './supabaseClient';
 import SoccerPitch from './SoccerPitch'; // Import the SoccerPitch component
 
 const RandomPosition = () => {
-  const [tactic, setTactic] = useState({ positions: [], year: '', manager: '' });
+  const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,12 +23,8 @@ const RandomPosition = () => {
         // Get a random index
         const randomIndex = Math.floor(Math.random() * data.length);
 
-        // Update state with positions, year, and manager
-        setTactic({
-          positions: JSON.parse(data[randomIndex].positions) || [],
-          year: data[randomIndex].year || '',
-          manager: data[randomIndex].manager || ''
-        });
+        // Parse the 'positions' JSON and update state
+        setPositions(data[randomIndex].positions || []);
       }
     } catch (err) {
       setError(err.message);
@@ -43,25 +39,18 @@ const RandomPosition = () => {
 
   return (
     <div>
-      <h1>Random Soccer Tactic</h1>
+      <h1>Random Soccer Position List</h1>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
-        <>
-          <SoccerPitch selectedPositions={tactic.positions.reduce((acc, position) => {
-            acc[position] = true;
-            return acc;
-          }, {})} />
-          <div>
-            <h2>Details</h2>
-            <p><strong>Year:</strong> {tactic.year}</p>
-            <p><strong>Manager:</strong> {tactic.manager}</p>
-          </div>
-        </>
+        <SoccerPitch selectedPositions={positions.reduce((acc, position) => {
+          acc[position] = true;
+          return acc;
+        }, {})} />
       )}
-      <button onClick={fetchRandomPosition}>Get Another Random Tactic</button>
+      <button onClick={fetchRandomPosition}>Get Another Random Position</button>
     </div>
   );
 };
