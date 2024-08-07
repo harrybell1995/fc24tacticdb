@@ -6,7 +6,7 @@ import SearchTactics from './SearchTactics';
 import RandomTacticsTable from './RandomTacticsTable';
 import TacticsTable from './TacticsTable';
 import DetailsPage from './DetailsPage';
-import Navbar from './navbar';
+import Navbar from './Navbar';
 import './styles.css'; // Make sure to import your CSS file
 
 function App() {
