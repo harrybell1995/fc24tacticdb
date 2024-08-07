@@ -4,11 +4,15 @@ import SoccerPitch from './SoccerPitch'; // Import the SoccerPitch component
 
 const positions = [
   'Goalkeeper (GK)',
+
+  // Defenders
   'Center Back (CB)',
   'Left Center Back (LCB)',
   'Right Center Back (RCB)',
   'Left Back (LB)',
   'Right Back (RB)',
+
+  // Midfielders
   'Defensive Midfielder (CDM)',
   'Left Defensive Midfielder (LDM)',
   'Right Defensive Midfielder (RDM)',
@@ -20,6 +24,8 @@ const positions = [
   'Right Attacking Midfielder (RCAM)',
   'Left Midfielder (LM)',
   'Right Midfielder (RM)',
+
+  // Forwards
   'Left Winger (LW)',
   'Right Winger (RW)',
   'Striker (ST)',
@@ -29,11 +35,11 @@ const positions = [
 
 const roles = {
   'Goalkeeper (GK)': ['Goalkeeper', 'Sweeper Keeper'],
+  'Right Back (RB)': ['Fullback', 'Wingback', 'Falseback', 'Attacking Wingback'],
+  'Left Back (LB)': ['Fullback', 'Wingback', 'Falseback', 'Attacking Wingback'],
   'Center Back (CB)': ['Defender', 'Stopper', 'Ball-Playing Defender'],
   'Left Center Back (LCB)': ['Defender', 'Stopper', 'Ball-Playing Defender'],
   'Right Center Back (RCB)': ['Defender', 'Stopper', 'Ball-Playing Defender'],
-  'Left Back (LB)': ['Fullback', 'Wingback'],
-  'Right Back (RB)': ['Fullback', 'Wingback'],
   'Defensive Midfielder (CDM)': ['Holding', 'Centre-Half', 'Deep-Lying Playmaker'],
   'Left Defensive Midfielder (LDM)': ['Holding', 'Centre-Half', 'Deep-Lying Playmaker'],
   'Right Defensive Midfielder (RDM)': ['Holding', 'Centre-Half', 'Deep-Lying Playmaker'],
@@ -49,92 +55,65 @@ const roles = {
   'Right Winger (RW)': ['Winger', 'Inside Forward', 'Wide Playmaker'],
   'Striker (ST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward'],
   'Left Striker (LST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward'],
-  'Right Striker (RST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward'],
+  'Right Striker (RST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward']
 };
 
-const focuses = {
-  'Goalkeeper (GK)': ['Defend', 'Balanced'],
-  'Center Back (CB)': ['Defend', 'Balanced', 'Build-Up'],
-  'Left Center Back (LCB)': ['Defend', 'Balanced', 'Build-Up'],
-  'Right Center Back (RCB)': ['Defend', 'Balanced', 'Build-Up'],
-  'Left Back (LB)': ['Defend', 'Balanced'],
-  'Right Back (RB)': ['Defend', 'Balanced'],
-  'Defensive Midfielder (CDM)': ['Defend', 'Roaming'],
-  'Left Defensive Midfielder (LDM)': ['Defend', 'Roaming'],
-  'Right Defensive Midfielder (RDM)': ['Defend', 'Roaming'],
-  'Central Midfielder (CM)': ['Balanced', 'Attack', 'Roaming'],
-  'Left Central Midfielder (LCM)': ['Balanced', 'Attack', 'Roaming'],
-  'Right Central Midfielder (RCM)': ['Balanced', 'Attack', 'Roaming'],
-  'Attacking Midfielder (CAM)': ['Balanced', 'Attack'],
-  'Left Attacking Midfielder (LCAM)': ['Balanced', 'Attack'],
-  'Right Attacking Midfielder (RCAM)': ['Balanced', 'Attack'],
-  'Left Midfielder (LM)': ['Balanced', 'Attack'],
-  'Right Midfielder (RM)': ['Balanced', 'Attack'],
-  'Left Winger (LW)': ['Balanced', 'Attack'],
-  'Right Winger (RW)': ['Balanced', 'Attack'],
-  'Striker (ST)': ['Attack', 'Balanced', 'Wide'],
-  'Left Striker (LST)': ['Attack', 'Balanced', 'Wide'],
-  'Right Striker (RST)': ['Attack', 'Balanced', 'Wide'],
-};
+
+const focuses = ['Balanced', 'Defend', 'Attack', 'Build-Up', 'Roaming', 'Complete', 'Wide'];
 
 const SoccerPositionForm = () => {
   const [selectedPositions, setSelectedPositions] = useState({});
-  const [rolesState, setRolesState] = useState({});
-  const [focusesState, setFocusesState] = useState({});
+  const [manager, setManager] = useState('');
+  const [year, setYear] = useState('');
+  const [tacticsharecode, setTacticShareCode] = useState('');
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     setSelectedPositions((prevSelected) => ({
       ...prevSelected,
-      [name]: checked ? { role: 'Default', focus: 'Balanced' } : undefined,
+      [name]: checked ? { role: roles[name][0], focus: focuses[0] } : undefined,
     }));
   };
 
-  const handleRoleChange = (event, position) => {
-    const { value } = event.target;
-    setRolesState((prevRoles) => ({
-      ...prevRoles,
-      [position]: value,
+  const handleRoleChange = (position, role) => {
+    setSelectedPositions((prevSelected) => ({
+      ...prevSelected,
+      [position]: { ...prevSelected[position], role },
     }));
   };
 
-  const handleFocusChange = (event, position) => {
-    const { value } = event.target;
-    setFocusesState((prevFocuses) => ({
-      ...prevFocuses,
-      [position]: value,
+  const handleFocusChange = (position, focus) => {
+    setSelectedPositions((prevSelected) => ({
+      ...prevSelected,
+      [position]: { ...prevSelected[position], focus },
     }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const selectedPositionsList = Object.keys(selectedPositions)
-      .filter((key) => selectedPositions[key])
-      .map((position) => ({
-        position,
-        role: rolesState[position] || 'Default',
-        focus: focusesState[position] || 'Balanced',
-      }));
-
-    const selectedPositionsJSON = JSON.stringify(selectedPositionsList);
-
-    // Example values for manager and year, replace with actual form inputs if needed
-    const manager = 'Manager Name'; // Replace with actual value
-    const year = '2024'; // Replace with actual value
+    const selectedPositionsList = Object.keys(selectedPositions).filter(
+      (key) => selectedPositions[key]
+    );
+    const selectedPositionsJSON = JSON.stringify(selectedPositionsList.map(key => ({
+      position: key,
+      role: selectedPositions[key].role,
+      focus: selectedPositions[key].focus
+    })));
 
     try {
       const { data, error } = await supabase
         .from('testtable')
-        .insert([{ positions: selectedPositionsJSON, manager, year }]);
+        .insert([{ positions: selectedPositionsJSON, manager, year, tacticsharecode }]);
 
       if (error) {
         console.error('Error inserting data:', error);
       } else {
         console.log('Data inserted successfully:', data);
         setSelectedPositions({});
-        setRolesState({});
-        setFocusesState({});
+        setManager('');
+        setYear('');
+        setTacticShareCode('');
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -142,69 +121,75 @@ const SoccerPositionForm = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <div style={{ width: '50%' }}>
-        <h1>Select Soccer Positions</h1>
-        <form onSubmit={handleSubmit}>
-          {positions.map((position) => (
-            <div key={position} style={{ marginBottom: '10px' }}>
-              <label>
-                <input
-                  type="checkbox"
-                  name={position}
-                  checked={selectedPositions[position] || false}
-                  onChange={handleCheckboxChange}
-                />
-                {position}
-              </label>
-              {selectedPositions[position] && (
-                <>
-                  <div>
-                    <label>
-                      Role:
-                      <select
-                        value={rolesState[position] || 'Default'}
-                        onChange={(e) => handleRoleChange(e, position)}
-                      >
-                        {(roles[position] || []).map((role) => (
-                          <option key={role} value={role}>{role}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                  <div>
-                    <label>
-                      Focus:
-                      <select
-                        value={focusesState[position] || 'Balanced'}
-                        onChange={(e) => handleFocusChange(e, position)}
-                      >
-                        {(focuses[position] || []).map((focus) => (
-                          <option key={focus} value={focus}>{focus}</option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-          <button type="submit">Submit</button>
-        </form>
-      </div>
-      <div style={{ width: '50%' }}>
-        <SoccerPitch 
-          selectedPositions={Object.keys(selectedPositions)
-            .filter((key) => selectedPositions[key])
-            .reduce((acc, position) => {
-              acc[position] = {
-                role: rolesState[position] || 'Default',
-                focus: focusesState[position] || 'Balanced',
-              };
-              return acc;
-            }, {})} 
-        />
-      </div>
+    <div className="form-container">
+      <h1>Select Soccer Positions</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="input-container">
+          <label>
+            Manager:
+            <input
+              type="text"
+              value={manager}
+              onChange={(e) => setManager(e.target.value)}
+            />
+          </label>
+          <label>
+            Year:
+            <input
+              type="text"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            />
+          </label>
+          <label>
+            Tactic Share Code:
+            <input
+              type="text"
+              value={tacticsharecode}
+              onChange={(e) => setTacticShareCode(e.target.value)}
+            />
+          </label>
+        </div>
+        {positions.map((position) => (
+          <div key={position} className="position-container">
+            <label>
+              <input
+                type="checkbox"
+                name={position}
+                checked={selectedPositions[position] ? true : false}
+                onChange={handleCheckboxChange}
+              />
+              {position}
+            </label>
+            {selectedPositions[position] && (
+              <div className="dropdown-container">
+                <select
+                  value={selectedPositions[position].role}
+                  onChange={(e) => handleRoleChange(position, e.target.value)}
+                >
+                  {roles[position].map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={selectedPositions[position].focus}
+                  onChange={(e) => handleFocusChange(position, e.target.value)}
+                >
+                  {focuses.map((focus) => (
+                    <option key={focus} value={focus}>
+                      {focus}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        ))}
+        <button type="submit">Submit</button>
+      </form>
+      <SoccerPitch selectedPositions={selectedPositions} />
     </div>
   );
 };

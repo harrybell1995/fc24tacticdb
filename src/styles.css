@@ -1,0 +1,94 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --table-header-bg: #f0f0f0;
+    --table-row-bg: #ffffff;
+    --highlight-bg: #dddddd;
+    
+  }
+  
+  [data-theme="dark"] {
+    --bg-color: #2a2a2a; /* ChatGPT Grey */
+    --text-color: #ffffff;
+    --table-header-bg: #444444;
+    --table-row-bg: #333333;
+    --highlight-bg: #555555;
+  }
+  
+  :root {
+    font-family: Inter, sans-serif;
+    font-feature-settings: 'liga' 1, 'calt' 1; /* Fix for Chrome */
+  }
+  
+  @supports (font-variation-settings: normal) {
+    :root {
+      font-family: InterVariable, sans-serif;
+    }
+  }
+    
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    padding: 10px;
+  }
+  
+  td {
+    background-color: var(--table-row-bg);
+    color: var(--text-color);
+    padding: 10px;
+  }
+  
+  .year-cell .year-span {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+  
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--nav-bg-color);
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar a {
+    color: var(--nav-link-color);
+    text-decoration: none;
+    margin: 0 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+  
+  .navbar a:hover {
+    background-color: var(--nav-link-hover-bg);
+  }
+  
+  .navbar .toggle-button {
+    cursor: pointer;
+    background-color: var(--nav-link-hover-bg);
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    color: var(--nav-link-color);
+  }
+  
+  .year-cell .year-span {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+
