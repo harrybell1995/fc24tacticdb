@@ -5,8 +5,8 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
   return (
     <nav className="navbar">
       <div className="nav-links">
-        <Link to="/">Create Tactic</Link>
-        <Link to="/random-tactics">View Random Tactics</Link>
+        <Link to="/">Tactics List</Link>
+        <Link to="/random-tactics">Create Tactic</Link>
         <Link to="/search">Search Tactics</Link>
       </div>
       <button className="toggle-button" onClick={toggleDarkMode}>

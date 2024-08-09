@@ -1,29 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import supabase from './supabaseClient';
-import SoccerPitch from './SoccerPitch'; // Import the SoccerPitch component
+import SoccerPitch from './SoccerPitch';
 
 const RandomPosition = () => {
   const [tactic, setTactic] = useState({ positions: [], year: '', manager: '', tacticShareCode: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [managerList, setManagerList] = useState([]);
 
-  const fetchRandomPosition = async () => {
+  const fetchAllManagers = async () => {
     try {
-      setLoading(true);
-
-      // Fetch all rows from the table
       const { data, error } = await supabase
         .from('testtable')
-        .select('*');
+        .select('manager')
+        .distinct();
 
       if (error) throw error;
 
-      // Ensure there's at least one row
-      if (data.length > 0) {
-        // Get a random index
-        const randomIndex = Math.floor(Math.random() * data.length);
+      // Extract the manager names
+      const managers = data.map(item => item.manager);
+      setManagerList(managers);
+    } catch (err) {
+      console.error('Error fetching managers:', err.message);
+    }
+  };
 
-        // Update state with positions, year, manager, and tacticShareCode
+  const fetchTactic = async (managerName = '') => {
+    try {
+      setLoading(true);
+
+      let query = supabase.from('testtable').select('*');
+
+      if (managerName) {
+        query = query.eq('manager', managerName);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      if (data.length > 0) {
+        const randomIndex = Math.floor(Math.random() * data.length);
         const positions = JSON.parse(data[randomIndex].positions || '[]');
 
         setTactic({
@@ -41,12 +59,33 @@ const RandomPosition = () => {
   };
 
   useEffect(() => {
-    fetchRandomPosition();
+    fetchAllManagers();
+    fetchTactic();
   }, []);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    fetchTactic(searchQuery);
+  };
 
   return (
     <div>
       <h1>Random Soccer Tactic</h1>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          list="managers"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search by Manager"
+        />
+        <datalist id="managers">
+          {managerList.map((manager, index) => (
+            <option key={index} value={manager} />
+          ))}
+        </datalist>
+        <button type="submit">Search</button>
+      </form>
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -68,7 +107,7 @@ const RandomPosition = () => {
           </div>
         </>
       )}
-      <button onClick={fetchRandomPosition}>Get Another Random Tactic</button>
+      <button onClick={() => fetchTactic()}>Get Another Random Tactic</button>
     </div>
   );
 };
