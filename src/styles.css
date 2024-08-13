@@ -295,3 +295,39 @@ td {
   border-radius: 5px;
   min-height: 80px;
 }
+
+/* Decade Selector Container */
+.decade-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: #1c1c1c; /* Dark background to enhance the retro vibe */
+  border-top: 2px solid #333;
+  border-bottom: 2px solid #333;
+}
+
+/* Decade Button Styling */
+.decade-button {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.5rem;
+  color: #f0f0f0;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: linear-gradient(45deg, #ff6b6b, #f5af19);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.decade-button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Active Decade Button */
+.decade-button.active {
+  background: linear-gradient(45deg, #1dd1a1, #10ac84);
+  color: #fff;
+}
