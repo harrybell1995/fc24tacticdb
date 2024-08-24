@@ -1,55 +1,79 @@
-/* SearchTactics.css */
+/* RandomTacticsTable.css */
 
-.search-tactics {
-    padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-  
-  h1 {
-    text-align: center;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  .results {
-    margin-top: 20px;
-  }
-  
-  .tactic-result {
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  
-  .tactic-result h2 {
-    margin-top: 0;
-  }
-  
+.random-tactics-table {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: Inter, sans-serif;
+}
+
+table {
+  font-family: Inter, sans-serif;
+
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+.year-cell {
+  text-align: center;
+}
+
+.year-span {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Decade-specific background colors */
+.year-1880s, .year-1890s { background-color: #B22222; } /* Firebrick */
+.year-1900s, .year-1910s { background-color: #DC143C; } /* Crimson */
+.year-1920s, .year-1930s { background-color: #FF0000; } /* Red */
+.year-1940s, .year-1950s { background-color: #FF4500; } /* Orange Red */
+.year-1960s, .year-1970s { background-color: #b87700; } /* Orange */
+.year-1980s, .year-1990s { background-color: #32CD32; } /* Gold */
+.year-2000s, .year-2010s { background-color: #228B22; } /* Yellow */
+.year-2020s, .year-2030s { background-color: #006400; } /* Yellow Green */
+    
+a {
+  color: #0066cc; /* Default link color */
+  text-decoration: none; /* Remove underline by default */
+}
+
+a:hover,
+a:focus {
+  color: #004d99; /* Darker shade for hover and focus */
+  text-decoration: underline; /* Add underline on hover/focus */
+}
+
+a:active {
+  color: #003366; /* Even darker shade when link is clicked */
+}
+
+/* Dark Mode Styles */
+[data-theme="dark"] a {
+  color: #66aaff; /* Default link color in dark mode */
+}
+
+[data-theme="dark"] a:hover,
+[data-theme="dark"] a:focus {
+  color: #3385ff; /* Darker shade for hover and focus in dark mode */
+}
+
+[data-theme="dark"] a:active {
+  color: #004d99; /* Even darker shade when link is clicked in dark mode */
+}

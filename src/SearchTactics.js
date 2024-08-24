@@ -1,72 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import supabase from './supabaseClient'; // Adjust the import if needed
-import SoccerPitch from './SoccerPitch'; // Import the SoccerPitch component
 
 const SearchTactics = () => {
-  const [manager, setManager] = useState('');
-  const [year, setYear] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search).get('query') || '';
 
-  const handleSearch = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { data, error } = await supabase
-        .from('testtable')
-        .select('*')
-        .ilike('manager', `%${manager}%`)
-        .or(`year.eq.${year}`);
-
-      if (error) throw error;
-
-      setResults(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const getYearClass = (year) => {
+    const decade = Math.floor(year / 10) * 10;
+    if (year >= 1880 && year < 1900) return 'year-1880s';
+    if (year >= 1900 && year < 1910) return 'year-1900s';
+    if (year >= 1910 && year < 1920) return 'year-1910s';
+    if (year >= 1920 && year < 1930) return 'year-1920s';
+    if (year >= 1930 && year < 1940) return 'year-1930s';
+    if (year >= 1940 && year < 1950) return 'year-1940s';
+    if (year >= 1950 && year < 1960) return 'year-1950s';
+    if (year >= 1960 && year < 1970) return 'year-1960s';
+    if (year >= 1970 && year < 1980) return 'year-1970s';
+    if (year >= 1980 && year < 1990) return 'year-1980s';
+    if (year >= 1990 && year < 2000) return 'year-1990s';
+    if (year >= 2000 && year < 2010) return 'year-2000s';
+    if (year >= 2010 && year < 2020) return 'year-2010s';
+    if (year >= 2020 && year < 2030) return 'year-2020s';
+    if (year >= 2030) return 'year-2030s';
+    return '';
   };
+
+  useEffect(() => {
+    const searchTactics = async () => {
+      if (!query) return;
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        console.log('Search query:', query); // Debugging: Check the query
+
+        const { data, error } = await supabase
+          .from('testtable')
+          .select('*')
+          .or(
+            `manager.ilike.%${query}%,tacticsharecode.ilike.%${query}%,tacticname.ilike.%${query}%,formation.ilike.%${query}%,club.ilike.%${query}%,clubcountry.ilike.%${query}%,league.ilike.%${query}%`
+          );
+
+        if (error) throw error;
+
+        console.log('Search results:', data); // Debugging: Check the results
+
+        setResults(data);
+      } catch (err) {
+        console.error('Search error:', err.message); // Debugging: Check the error
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    searchTactics();
+  }, [query]);
 
   return (
     <div className="search-tactics">
-      <h1>Search Tactics</h1>
-      <form onSubmit={handleSearch}>
-        <div className="form-group">
-          <label htmlFor="manager">Manager Name:</label>
-          <input
-            type="text"
-            id="manager"
-            value={manager}
-            onChange={(e) => setManager(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="year">Year:</label>
-          <input
-            type="text"
-            id="year"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-          />
-        </div>
-        <button type="submit">Search</button>
-      </form>
-
+      <h1>Search Results</h1>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       
-      <div className="results">
-        {results.map((tactic, index) => (
-          <div key={index} className="tactic-result">
-            <h2>Tactic from {tactic.manager} ({tactic.year})</h2>
-            <SoccerPitch selectedPositions={JSON.parse(tactic.positions)} />
-          </div>
-        ))}
-      </div>
+      {results.length === 0 && !loading && <p>No results found.</p>}
+      
+      {results.length > 0 && (
+        <table className="results-table">
+          <thead>
+            <tr>
+              <th>Manager</th>
+              <th>Year</th>
+              <th>Formation</th>
+              <th>Club</th>
+              <th>League</th>
+              <th>Tactic Share Code</th>
+              <th>Details</th> {/* Add a column for Details link */}
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((tactic) => (
+              <tr key={tactic.id}>
+                <td>{tactic.manager}</td>
+                <span className={`year-span ${getYearClass(tactic.year)}`}>
+                  {tactic.year}
+                </span>
+                <td>{tactic.formation}</td>
+                <td>{tactic.club}</td>
+                <td>{tactic.league}</td>
+                <td>{tactic.tacticsharecode}</td>
+                <td>
+                  <Link to={`/details/${tactic.tacticsharecode}`}>Details</Link>
+                </td> {/* Add the Details link */}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

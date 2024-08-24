@@ -3,21 +3,19 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SoccerPositionForm from './SoccerPositionForm';
 import RandomPosition from './RandomPosition';
 import SearchTactics from './SearchTactics';
-import RandomTacticsTable from './RandomTacticsTable';
+import HomePage from './HomePage'; // Import the new HomePage component
 import FormationsByDecade from './FormationsByDecade';
 import DetailsPage from './DetailsPage';
-import Navbar from './Navbar';
-import './styles.css'; // Make sure to import your CSS file
+import Navbar from './Navbar'; // Import the Navbar component
+import RandomTacticsTable from './RandomTacticsTable';
+
+import './styles.css'; // Import your CSS file
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true); // Default to dark mode
 
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   const toggleDarkMode = () => {
@@ -25,21 +23,25 @@ function App() {
   };
 
   return (
-    <Router>
-      <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} />
-      <div>
-        <Routes>
-          <Route path="/" element={<RandomTacticsTable />} />
-          <Route path="/decades/:decade" element={<FormationsByDecade />} />
-          <Route path="/random-position" element={<RandomPosition />} />
-          <Route path="/search" element={<SearchTactics />} />
-          <Route path="/random-tactics" element={<SoccerPositionForm />} />
-          <Route path="/details/:tacticsharecode" element={<DetailsPage />} />
-          <Route path="/create" element={<SoccerPositionForm />} />
-        </Routes>
-      </div>
-    </Router>
+    <div>
+      <Navbar darkMode={darkMode} toggleDarkMode={toggleDarkMode} /> {/* Include Navbar here */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/decades/:decade" element={<FormationsByDecade />} />
+        <Route path="/random-position" element={<RandomPosition />} />
+        <Route path="/search" element={<SearchTactics />} />
+        <Route path="/random-tactics" element={<RandomTacticsTable />} />
+        <Route path="/details/:tacticsharecode" element={<DetailsPage />} />
+        <Route path="/create" element={<SoccerPositionForm />} />
+      </Routes>
+    </div>
   );
 }
 
-export default App;
+export default function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
