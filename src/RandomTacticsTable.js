@@ -21,7 +21,7 @@ const RandomTacticsTable = () => {
       // Fetch a larger set of rows from the table
       const { data, error } = await supabase
         .from('testtable')
-        .select('manager, year, tacticsharecode, formation, club') // Use lowercase 'tacticsharecode'
+        .select('manager, year, tacticsharecode, formation, club, tacticname') // Use lowercase 'tacticsharecode'
         .limit(100); // Fetch more than 25
 
       if (error) throw error;
@@ -73,8 +73,9 @@ const RandomTacticsTable = () => {
         <table>
           <thead>
             <tr>
-              <th>Manager</th>
-              <th>Formation</th>
+            <th>Tactic Name</th>
+            <th>Manager</th>
+            <th>Formation</th>
               <th>Year</th>
               <th>Tactic Share Code</th>
               <th>Club</th>
@@ -84,6 +85,7 @@ const RandomTacticsTable = () => {
           <tbody>
             {tactics.map((tactic, index) => (
               <tr key={index}>
+                <td>{tactic.tacticname}</td>
                 <td>{tactic.manager}</td>
                 <td>{tactic.formation}</td> {/* Display the tacticsharecode */}
                 <td className="year-cell">

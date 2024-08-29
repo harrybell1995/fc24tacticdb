@@ -137,7 +137,7 @@ const SoccerPositionForm = () => {
     <div className="details-page-container">
       <div className="tactic-content">
         <div className="tactic-details">
-          {['Manager Name', 'Season', 'Tactic Share Code', 'Club Nationality', 'League'].map(field => (
+          {['Manager', 'Season', 'Tactic Share Code', 'Club Nationality', 'League'].map(field => (
             <div key={field} className="form__group field">
               <input
                 type="text"
@@ -163,57 +163,58 @@ const SoccerPositionForm = () => {
             </div>
           ))}
         </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="positions-grid">
+            {positions.map(position => (
+              <div
+                key={position}
+                className="position-container"
+                onClick={() => handleCheckboxChange(position)}
+                style={{ background: selectedPositions[position] ? `linear-gradient(${getPositionColor(position)}, transparent)` : 'none' }}
+              >
+                <label>
+                  <input
+                    type="checkbox"
+                    name={position}
+                    checked={!!selectedPositions[position]}
+                    onChange={() => handleCheckboxChange(position)}
+                    style={{ display: 'none' }}
+                  />
+                  {position}
+                </label>
+                {selectedPositions[position] && (
+                  <div className="dropdown-container expanded">
+                    <select
+                      value={selectedPositions[position].role}
+                      onChange={(e) => handleSelectChange(position, 'role', e.target.value)}
+                    >
+                      {roles[position].map(role => (
+                        <option key={role} value={role}>{role}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={selectedPositions[position].focus}
+                      onChange={(e) => handleSelectChange(position, 'focus', e.target.value)}
+                    >
+                      {focuses.map(focus => (
+                        <option key={focus} value={focus}>{focus}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+        
         <div className="tactic-pitch">
-          <SoccerPitch selectedPositions={selectedPositions} />
+          <SoccerPitch positions={selectedPositions} />
         </div>
       </div>
-  
-      <form onSubmit={handleSubmit}>
-        <div className="positions-grid">
-          {positions.map(position => (
-            <div
-              key={position}
-              className="position-container"
-              onClick={() => handleCheckboxChange(position)}
-              style={{ background: selectedPositions[position] ? `linear-gradient(${getPositionColor(position)}, transparent)` : 'none' }}
-            >
-              <label>
-                <input
-                  type="checkbox"
-                  name={position}
-                  checked={!!selectedPositions[position]}
-                  onChange={() => handleCheckboxChange(position)}
-                  style={{ display: 'none' }}
-                />
-                {position}
-              </label>
-              {selectedPositions[position] && (
-                <div className="dropdown-container expanded">
-                  <select
-                    value={selectedPositions[position].role}
-                    onChange={(e) => handleSelectChange(position, 'role', e.target.value)}
-                  >
-                    {roles[position].map(role => (
-                      <option key={role} value={role}>{role}</option>
-                    ))}
-                  </select>
-                  <select
-                    value={selectedPositions[position].focus}
-                    onChange={(e) => handleSelectChange(position, 'focus', e.target.value)}
-                  >
-                    {focuses.map(focus => (
-                      <option key={focus} value={focus}>{focus}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        <button type="submit">Submit</button>
-      </form>
     </div>
   );
-};  
+};
 
 export default SoccerPositionForm;

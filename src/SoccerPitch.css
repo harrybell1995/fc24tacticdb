@@ -1,78 +1,128 @@
-/* SoccerPitch.css */
+/* Base styles */
+:root {
+  --pitch-bg-light: #2c2c2c; /* Slightly lighter dark gray for pitch */
+  --pitch-bg-dark: #1e1e1e; /* Darker pitch color for dark mode */
+  --position-bg-light: #3a3a3a; /* Darker gray for positions */
+  --position-bg-dark: #333; /* Darker gray for positions in dark mode */
+  --text-color-light: #fff; /* Text color for light mode */
+  --text-color-dark: #ddd; /* Text color for dark mode */
+  --separator-color: #444; /* Color for the separator line */
+}
+
+/* Dark mode toggle */
+body[data-theme='dark'] {
+  --pitch-bg-light: #1e1e1e;
+  --position-bg-light: #333;
+  --text-color-light: #ddd;
+}
 
 /* Base styles for the soccer pitch */
 .soccer-pitch {
   position: relative;
-  right: 0;
-  top: 0;
   width: 100%;
   min-height: 600px; /* Ensures a minimum height */
-  background-color: #1e1e1e; /* Darker background color for night mode */
+  background: var(--pitch-bg-light);
+  border: 1px solid #000;
+  border-radius: 8px;
+  overflow: hidden;
   padding: 20px;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
-/* Styles for the pitch container */
-.pitch {
-  position: relative;
-  width: 100%;
-  min-height: 600px; /* Ensures a minimum height */
-  background-color: #333; /* Darker background for night mode */
-  border-radius: 10px;
-  padding: 20px;
-}
-
-/* Styles for player positions */
+/* Styles for player positions (FUT card style) */
 .position {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: #e0e0e0;
-  border-radius: 50%;
+  width: max-content; /* Adjust width to fit text */
+  max-width: 120px; /* Limit maximum width */
+  background: var(--position-bg-light);
+  border-radius: 8px; /* Rounded corners */
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 4px solid #000;
+  border: 2px solid #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow for a more 3D effect */
+  padding: 10px;
+  color: var(--text-color-light);
   font-size: 14px;
   font-weight: bold;
   text-align: center;
-  color: #000;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility */
+  overflow: hidden; /* Ensure no overflow of text */
 }
 
-/* Hover effect for position */
-.position:hover::after {
-  content: attr(data-role) " - " attr(data-focus);
-  position: absolute;
-  bottom: -30px;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 5px;
-  border-radius: 3px;
-  white-space: nowrap;
+/* Carousel animation for long text */
+.position .carousel-text {
+  display: inline-block;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflowed text */
+}
+
+.position.long-text .carousel-text {
+  display: block;
+  animation: scroll-text 10s linear infinite; /* Adjust duration as needed */
+}
+
+@keyframes scroll-text {
+  0% {
+    transform: translateX(100%);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Card text styling */
+.position-abbreviation {
+  font-size: 18px; /* Larger font size for abbreviation */
+  margin-top: 5px; /* Space above abbreviation */
+}
+
+.position-separator {
+  width: 80%; /* Width of the separator */
+  height: 1px; /* Height of the separator */
+  background: var(--separator-color);
+  margin: 5px 0; /* Space above and below separator */
+}
+
+/* Position info styling */
+.position-info {
+  display: flex;
+  flex-direction: column;
   font-size: 12px;
+  color: var(--text-color-light);
+  margin-top: 5px; /* Space above info */
+  overflow: hidden; /* Hide overflowed text */
+  width: 100%;
+  position: relative;
+}
+
+.position-info span {
+  display: block; /* Ensure each span is on a new line */
 }
 
 /* Responsive styles for mobile view */
 @media (max-width: 768px) {
   .soccer-pitch {
-    width: 100%; /* Full width on mobile */
-    height: 50%; /* Adjust height for mobile view */
-  }
-
-  .pitch {
-    height: 100%; /* Full height of the container */
+    padding: 10px; /* Adjust padding for mobile */
   }
 
   .position {
-    width: 30px; /* Smaller circles on mobile */
-    height: 30px;
+    max-width: 100px; /* Smaller max-width on mobile */
     font-size: 12px; /* Smaller font size */
   }
 
-  .position:hover::after {
-    font-size: 10px; /* Smaller tooltip font size */
+  .position-abbreviation {
+    font-size: 16px; /* Smaller abbreviation font size */
+  }
+
+  .position-info {
+    font-size: 10px; /* Smaller info font size */
+  }
+
+  .position-info .carousel-text {
+    animation-duration: 7s; /* Faster animation on mobile */
   }
 }
