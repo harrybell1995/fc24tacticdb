@@ -43,10 +43,16 @@ const DetailsPage = () => {
 
   if (!tactic) return <p>No tactic found</p>;
 
-  const positions = typeof tactic.positions === 'string' ? JSON.parse(tactic.positions) : tactic.positions;
+  let positions = typeof tactic.positions === 'string' ? JSON.parse(tactic.positions) : tactic.positions;
 
-  const positionsObject = positions.reduce((acc, { position, role, focus }) => {
-    acc[position] = { role, focus };
+  if (typeof positions !== 'object' || Array.isArray(positions)) {
+    console.error("Expected 'positions' to be an object but got:", positions);
+    positions = {}; // Set default to empty object
+  }
+
+  const positionsObject = Object.keys(positions).reduce((acc, position) => {
+    const roles = positions[position];
+    acc[position] = { role: roles[0] || 'No Role', focus: roles[1] || 'No Focus' };
     return acc;
   }, {});
 
@@ -60,39 +66,34 @@ const DetailsPage = () => {
 
   return (
     <div className="details-page-container">
-      <div className="view-toggle">
-        <div
-          className={`tab ${activeTab === 'pitch' ? 'active' : ''}`}
-          onClick={() => setActiveTab('pitch')}
-        >
-          Pitch
-        </div>
-        <div
-          className={`tab ${activeTab === 'positions' ? 'active' : ''}`}
-          onClick={() => setActiveTab('positions')}
-        >
-          Positions
+      <div className="view-toggle-width">
+        <div className="view-toggle">
+          <div className={`tab ${activeTab === 'pitch' ? 'active' : ''}`} onClick={() => setActiveTab('pitch')}>Pitch
+          </div>
+          <div className={`tab ${activeTab === 'positions' ? 'active' : ''}`} onClick={() => setActiveTab('positions')}          >
+            Positions
+          </div>
         </div>
       </div>
+      <div className="tactic-row-thingy">        
+        <div className="tactic-details">
+          <ul className="tactic-details-list">
+            <li><strong>Manager Name:</strong> {tactic.manager}</li>
+            <li><strong>Year:</strong> {tactic.year}</li>
+            <li><strong>Formation:</strong> {tactic.formation}</li>
+            <li><strong>Club:</strong> {tactic.club}</li>
+            <li><strong>Club Country:</strong> {tactic.clubcountry}</li>
+            <li><strong>League:</strong> {tactic.league}</li>
+            <li><strong></strong> {tactic.notes}</li>
+            <li><strong>Tactical Preset:</strong> {tactic.tacticalpreset}</li>
+            <li><strong>Build-up Style:</strong> {tactic.buildupstyle}</li>
+            <li><strong>Defensive Approach:</strong> {tactic.defensiveapproach}</li>
+            <li><strong>Tactic Share Code:</strong> {tactic.tacticsharecode}</li>
+          </ul>
+        </div>
 
-      <div className="tactic-details">
-        <ul className="tactic-details-list">
-          <li><strong>Manager Name:</strong> {tactic.manager}</li>
-          <li><strong>Year:</strong> {tactic.year}</li>
-          <li><strong>Formation:</strong> {tactic.formation}</li>
-          <li><strong>Club:</strong> {tactic.club}</li>
-          <li><strong>Club Country:</strong> {tactic.clubcountry}</li>
-          <li><strong>League:</strong> {tactic.league}</li>
-          <li><strong>Tactical Preset:</strong> {tactic.tacticalpreset}</li>
-          <li><strong>Build-up Style:</strong> {tactic.buildupstyle}</li>
-          <li className="large-gap"><strong>Defensive Approach:</strong> {tactic.defensiveapproach}</li>
-          <li><strong>Tactic Share Code:</strong> {tactic.tacticsharecode}</li>
-        </ul>
-      </div>
-
-      {activeTab === 'positions' && (
-        <div className="positions-list">
-          <div className="positions-display">
+        {activeTab === 'positions' && (
+          <div className="positions-list">
             {Object.keys(positionsObject).map((position) => {
               const { role, focus } = positionsObject[position];
               return (
@@ -107,24 +108,26 @@ const DetailsPage = () => {
                     {position.match(/\((.*?)\)/)[1]}
                   </div>
                   <div className="position-role">
-                    Role: {role || 'No Role'}
+                    Role: {role}
                   </div>
                   <div className="position-focus">
-                    Focus: {focus || 'No Focus'}
+                    Focus: {focus}
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
-      )}
+        )}
 
-      {activeTab === 'pitch' && (
-        <div className="tactic-pitch">
-          <SoccerPitch selectedPositions={positionsObject} />
-        </div>
-      )}
-    </div>
+        {activeTab === 'pitch' && (
+          <div className="tactic-pitch">
+            <SoccerPitch selectedPositions={positionsObject} />
+          </div>
+        )}
+      </div>
+
+
+      </div>
   );
 };
 

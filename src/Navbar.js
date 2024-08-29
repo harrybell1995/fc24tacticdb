@@ -18,6 +18,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
         <Link to="/">Home</Link>
         <Link to="/create">Create Tactic</Link>
         <Link to="/random-tactics">Tactics List</Link>
+        <Link to="/decades/2020s">Decades</Link>
         {/* Additional links can be added here */}
       </div>
       <form onSubmit={handleSearch} className="search-form">

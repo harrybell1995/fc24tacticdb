@@ -50,7 +50,8 @@
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  margin: 0;
+  margin-left: 5%;
+  margin-right: 5%;
   padding: 0;
   font-family: Inter, sans-serif;
   font-feature-settings: 'liga' 1, 'calt' 1; /* Fix for Chrome */
@@ -87,6 +88,9 @@ td {
   background-color: var(--nav-bg-color);
   padding: 10px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: -6%;
+  margin-right: -6%;
+
 }
 
 .navbar a {
@@ -155,9 +159,8 @@ td {
 
 .tactic-details {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns for detail-boxes */
   gap: 20px; /* Space between detail-boxes */
-  max-width: 50%; /* Limits the width to half of the container */
+  max-width: 25%; /* Limits the width to half of the container */
 }
 
 .detail-box {
@@ -336,27 +339,19 @@ td {
 .view-toggle {
   display: flex;
   margin-bottom: 20px;
-  border-bottom: 2px solid #ccc; /* Add a border to the bottom of the tabs */
 }
 
 .view-toggle .tab {
   padding: 10px 20px;
-  border: 1px solid #ccc;
   border-bottom: none; /* Remove bottom border to connect with content */
-  background-color: #f5f5f5;
   cursor: pointer;
   transition: background-color 0.3s;
   font-weight: bold;
 }
 
 .view-toggle .tab.active {
-  background-color: #ddd;
   border-color: #aaa;
   border-bottom: 2px solid #ddd; /* Create an active tab effect */
-}
-
-.tactic-details {
-  flex: 1 1 300px; /* Adjust width as needed, allowing flexibility */
 }
 
 .tactic-details-list {
@@ -417,18 +412,26 @@ td {
   transform: translateY(-50%);
 }
 
-.position-abbreviation {
-  font-size: 14px;
-  font-weight: bold;
+/* Container for the details page */
+.details-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.position-role,
-.position-focus {
-  font-size: 12px;
+/* View toggle button styles */
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px; /* Space between the buttons and the content */
+  position: sticky; /* Stick to the top of the container */
+  top: 20px; /* Adjust based on navbar height */
+  padding: 10px 0; /* Vertical padding for the buttons */
+  z-index: 10; /* Ensure it's above other content */
 }
 
-.tactic-pitch {
-  /* Ensure the pitch takes the available space */
-  width: 100%;
-  max-width: 800px; /* Adjust as needed */
+.tactic-row-thingy{
+  display: flex;
 }

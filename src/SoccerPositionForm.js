@@ -78,16 +78,21 @@ const SoccerPositionForm = () => {
   };
 
   const handleCheckboxChange = (position) => {
+    const defaultRole = roles[position] ? roles[position][0] : 'Unknown Role';
+    const defaultFocus = focuses[0];
     setSelectedPositions(prev => ({
       ...prev,
-      [position]: prev[position] ? undefined : { role: roles[position][0], focus: focuses[0] }
+      [position]: prev[position] ? undefined : { role: defaultRole, focus: defaultFocus }
     }));
   };
 
   const handleSelectChange = (position, type, value) => {
     setSelectedPositions(prev => ({
       ...prev,
-      [position]: { ...prev[position], [type]: value }
+      [position]: { 
+        ...prev[position], 
+        [type]: focuses.includes(value) || roles[position]?.includes(value) ? value : prev[position][type] 
+      }
     }));
   };
 
@@ -137,7 +142,7 @@ const SoccerPositionForm = () => {
     <div className="details-page-container">
       <div className="tactic-content">
         <div className="tactic-details">
-          {['Manager', 'Season', 'Tactic Share Code', 'Club Nationality', 'League'].map(field => (
+          {['manager', 'year', 'tacticsharecode', 'clubcountry', 'league'].map(field => (
             <div key={field} className="form__group field">
               <input
                 type="text"
@@ -189,7 +194,7 @@ const SoccerPositionForm = () => {
                       value={selectedPositions[position].role}
                       onChange={(e) => handleSelectChange(position, 'role', e.target.value)}
                     >
-                      {roles[position].map(role => (
+                      {(roles[position] || ['Unknown Role']).map(role => (
                         <option key={role} value={role}>{role}</option>
                       ))}
                     </select>
