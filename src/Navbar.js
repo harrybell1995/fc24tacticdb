@@ -1,41 +1,63 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import './Navbar.css';
 
-const Navbar = ({ darkMode, toggleDarkMode }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+function Navbar({ darkMode, toggleDarkMode }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
-  const handleSearch = (event) => {
-    event.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      navigate(`/search-tactics?query=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();
     }
   };
 
   return (
     <nav className="navbar">
-      <div className="nav-links">
+      {/* Hamburger Menu */}
+      <button className="hamburger-menu" onClick={handleMenuToggle}>
+        &#9776;
+      </button>
+
+      {/* Navbar Links */}
+      <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
         <Link to="/">Home</Link>
         <Link to="/create">Create Tactic</Link>
         <Link to="/random-tactics">Tactics List</Link>
         <Link to="/decades/2020s">Decades</Link>
-        {/* Additional links can be added here */}
+        <section className="search-box">
+          <input
+            type="text"
+            placeholder="Search team, tactic, manager, or league..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            onKeyDown={handleKeyPress}
+          />
+          <button onClick={handleSearch}>Search</button>
+        </section>
       </div>
-      <form onSubmit={handleSearch} className="search-form">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input"
-        />
-        <button type="submit" className="search-button">Search</button>
-      </form>
-      <button className="toggle-button" onClick={toggleDarkMode}>
-        {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+
+      {/* Night Mode Toggle */}
+      <button className="night-mode-icon" onClick={toggleDarkMode}>
+        {darkMode ? '🌙' : '☀️'}
       </button>
     </nav>
   );
-};
+}
 
 export default Navbar;

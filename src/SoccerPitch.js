@@ -1,11 +1,7 @@
+import React from 'react';
 import './SoccerPitch.css';
-import React, { useEffect, useRef } from 'react';
 
-const SoccerPitch = ({ selectedPositions }) => {
-  useEffect(() => {
-    console.log("Selected Positions:", selectedPositions);
-  }, [selectedPositions]);
-
+const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) => {
   const positionStyles = {
     'Goalkeeper (GK)': { bottom: '10%', left: '50%', transform: 'translateX(-50%)' },
     'Center Back (CB)': { bottom: '25%', left: '50%', transform: 'translateX(-50%)' },
@@ -21,7 +17,7 @@ const SoccerPitch = ({ selectedPositions }) => {
     'Left Midfielder (LM)': { bottom: '60%', left: '10%' },
     'Right Midfielder (RM)': { bottom: '60%', right: '10%' },
     'Right Central Midfielder (RCM)': { bottom: '50%', right: '25%' },
-    'Attacking Midfielder (CAM)': { bottom: '65%', left: '50%', transform: 'translateX(-50%)' },
+    'Attacking Midfielder (CAM)': { bottom: '65%', left: '50%' },
     'Left Attacking Midfielder (LCAM)': { bottom: '65%', left: '20%' },
     'Right Attacking Midfielder (RCAM)': { bottom: '65%', right: '20%' },
     'Left Winger (LW)': { bottom: '75%', left: '10%' },
@@ -31,37 +27,35 @@ const SoccerPitch = ({ selectedPositions }) => {
     'Right Striker (RST)': { bottom: '80%', right: '30%' }
   };
 
-  const positionRefs = useRef({});
-
   return (
     <div className="soccer-pitch">
       <div className="pitch">
-        {selectedPositions &&
-          Object.keys(selectedPositions).map((position) => {
-            const { role, focus } = selectedPositions[position] || {};
+        {/* This is the pitch background with gradient and pattern */}
+      </div>
+      <div className="positions-container">
+        {Object.keys(selectedPositions).map((position) => {
+          const { role, focus } = selectedPositions[position] || {};
+          const isSelected = position === selectedPosition;
 
-            return (
-              <div
-                key={position}
-                className="position"
-                style={positionStyles[position]}
-              >
-                <div className="position-info">
-                  <div className="position-abbreviation">
-                    {position.match(/\((.*?)\)/)[1]} {/* Display only the abbreviation */}
-                  </div>
-                  <div className="position-separator"></div>
-                  <div
-                    className="carousel-text"
-                    ref={(el) => (positionRefs.current[position] = el)}
-                  >
-                    <span>Role: {role || 'No Role'}</span>
-                    <span>Focus: {focus || 'No Focus'}</span>
-                  </div>
+          return (
+            <div
+              key={position}
+              className={`position ${isSelected ? 'selected' : ''}`}
+              style={positionStyles[position]}
+              onClick={() => onPositionClick(position)}
+            >
+              <div className="position-info">
+                <div className="position-abbreviation">
+                  {position.match(/\((.*?)\)/)[1]} {/* Display only the abbreviation */}
+                </div>
+                <div className="position-details">
+                  <span className="role">{role || 'No Role'}</span>
+                  <span className="focus">{focus || 'No Focus'}</span>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

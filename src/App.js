@@ -30,6 +30,7 @@ function App() {
         <Route path="/decades/:decade" element={<FormationsByDecade />} />
         <Route path="/random-position" element={<RandomPosition />} />
         <Route path="/search" element={<SearchTactics />} />
+        <Route path="/search-tactics" element={<SearchTactics />} />
         <Route path="/random-tactics" element={<RandomTacticsTable />} />
         <Route path="/details/:tacticsharecode" element={<DetailsPage />} />
         <Route path="/create" element={<SoccerPositionForm />} />

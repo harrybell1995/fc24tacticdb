@@ -1,3 +1,5 @@
+// src/SearchTactics.js
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import supabase from './supabaseClient'; // Adjust the import if needed
@@ -37,8 +39,6 @@ const SearchTactics = () => {
       setError(null);
 
       try {
-        console.log('Search query:', query); // Debugging: Check the query
-
         const { data, error } = await supabase
           .from('testtable')
           .select('*')
@@ -48,11 +48,8 @@ const SearchTactics = () => {
 
         if (error) throw error;
 
-        console.log('Search results:', data); // Debugging: Check the results
-
         setResults(data);
       } catch (err) {
-        console.error('Search error:', err.message); // Debugging: Check the error
         setError(err.message);
       } finally {
         setLoading(false);
@@ -64,7 +61,7 @@ const SearchTactics = () => {
 
   return (
     <div className="search-tactics">
-      <h1>Search Results</h1>
+      <h1>Search Results for "{query}"</h1>
       {loading && <p>Loading...</p>}
       {error && <p>Error: {error}</p>}
       
@@ -80,23 +77,23 @@ const SearchTactics = () => {
               <th>Club</th>
               <th>League</th>
               <th>Tactic Share Code</th>
-              <th>Details</th> {/* Add a column for Details link */}
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
             {results.map((tactic) => (
               <tr key={tactic.id}>
                 <td>{tactic.manager}</td>
-                <span className={`year-span ${getYearClass(tactic.year)}`}>
+                <td className={`year-span ${getYearClass(tactic.year)}`}>
                   {tactic.year}
-                </span>
+                </td>
                 <td>{tactic.formation}</td>
                 <td>{tactic.club}</td>
                 <td>{tactic.league}</td>
                 <td>{tactic.tacticsharecode}</td>
                 <td>
                   <Link to={`/details/${tactic.tacticsharecode}`}>Details</Link>
-                </td> {/* Add the Details link */}
+                </td>
               </tr>
             ))}
           </tbody>

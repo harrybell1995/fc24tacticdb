@@ -1,128 +1,126 @@
-/* Base styles */
-:root {
-  --pitch-bg-light: #2c2c2c; /* Slightly lighter dark gray for pitch */
-  --pitch-bg-dark: #1e1e1e; /* Darker pitch color for dark mode */
-  --position-bg-light: #3a3a3a; /* Darker gray for positions */
-  --position-bg-dark: #333; /* Darker gray for positions in dark mode */
-  --text-color-light: #fff; /* Text color for light mode */
-  --text-color-dark: #ddd; /* Text color for dark mode */
-  --separator-color: #444; /* Color for the separator line */
-}
-
-/* Dark mode toggle */
-body[data-theme='dark'] {
-  --pitch-bg-light: #1e1e1e;
-  --position-bg-light: #333;
-  --text-color-light: #ddd;
-}
-
-/* Base styles for the soccer pitch */
+/* Container for the entire pitch and sidebar layout */
 .soccer-pitch {
   position: relative;
   width: 100%;
-  min-height: 600px; /* Ensures a minimum height */
-  background: var(--pitch-bg-light);
-  border: 1px solid #000;
-  border-radius: 8px;
-  overflow: hidden;
-  padding: 20px;
-  box-sizing: border-box;
+  height: 100%;
+  display: flex;
 }
 
-/* Styles for player positions (FUT card style) */
+.pitch {
+  position: relative;
+  width: 100%;
+  height: 80vh; /* Adjust as needed */
+  background: linear-gradient(
+    rgba(0, 100, 0, 0.8), /* Dark green with opacity */
+    rgba(0, 100, 0, 0)    /* Fully transparent */
+  );
+  overflow: hidden;
+  z-index: 1; /* Ensure pitch background is below the positions */
+}
+
+.pitch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1), /* Light color with opacity */
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.2) 10px,
+    rgba(255, 255, 255, 0.2) 20px
+  );
+  opacity: 0.3; /* Adjust the opacity to make the pattern faded */
+  z-index: 1; /* Ensure the pattern is on top of the gradient */
+}
+
+/* Position container */
+.positions-container {
+  position: absolute; /* Or fixed, depending on your layout */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto; /* Ensure positions are clickable */
+  z-index: 2; /* Ensure positions are on top of the pitch */
+}
+
+/* Position divs with hexagonal shape and refined styling */
 .position {
   position: absolute;
-  width: max-content; /* Adjust width to fit text */
-  max-width: 120px; /* Limit maximum width */
-  background: var(--position-bg-light);
-  border-radius: 8px; /* Rounded corners */
+  width: 110px; /* Increased width for better visibility */
+  height: 125px; /* Adjusted height to maintain hexagonal proportions */
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a); /* Subtle dark gradient */
+  color: #fff;
+  clip-path: polygon(
+    50% 0%, 
+    100% 5%, 
+    100% 95%, 
+    50% 100%, 
+    0% 95%, 
+    0% 5%
+  );
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  border: 2px solid #000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Slightly stronger shadow for a more 3D effect */
-  padding: 10px;
-  color: var(--text-color-light);
-  font-size: 14px;
-  font-weight: bold;
+  align-items: center;
   text-align: center;
-  overflow: hidden; /* Ensure no overflow of text */
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add subtle shadow for depth */
+  background-color: #3b3b3b; /* Slightly lighter shade on hover */
+
 }
 
-/* Carousel animation for long text */
-.position .carousel-text {
-  display: inline-block;
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide overflowed text */
+.position:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* More pronounced shadow on hover */
+  transform: translateY(-5px); /* Adds lift effect on hover */
 }
 
-.position.long-text .carousel-text {
-  display: block;
-  animation: scroll-text 10s linear infinite; /* Adjust duration as needed */
+/* Selected position with more distinct styling */
+.position.selected {
+  background-color: #4caf50; /* A softer green to indicate selection */
+  border-color: #4caf50;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Stronger shadow for emphasis */
+  transform: translateY(-5px); /* Lift effect for selected position */
 }
 
-@keyframes scroll-text {
-  0% {
-    transform: translateX(100%);
-  }
-  50% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+/* Refined typography and layout for the position information */
+.position-info {
+  text-align: center;
+  padding: 5px 0; /* Added padding for better text positioning */
 }
 
-/* Card text styling */
 .position-abbreviation {
-  font-size: 18px; /* Larger font size for abbreviation */
-  margin-top: 5px; /* Space above abbreviation */
+  font-size: 16px; /* Increased font size for better readability */
+  font-weight: bold;
+  color: #ffdb4d; /* Brighter color to match the selected state */
 }
 
 .position-separator {
-  width: 80%; /* Width of the separator */
-  height: 1px; /* Height of the separator */
-  background: var(--separator-color);
-  margin: 5px 0; /* Space above and below separator */
+  width: 80%;
+  height: 1px;
+  background-color: #fff;
+  opacity: 0.7; /* Slightly transparent separator for a cleaner look */
+  margin: 8px 0;
 }
 
-/* Position info styling */
-.position-info {
+.position-details {
   display: flex;
   flex-direction: column;
-  font-size: 12px;
-  color: var(--text-color-light);
-  margin-top: 5px; /* Space above info */
-  overflow: hidden; /* Hide overflowed text */
-  width: 100%;
-  position: relative;
+  gap: 4px; /* Added spacing between role and focus */
 }
 
-.position-info span {
-  display: block; /* Ensure each span is on a new line */
+.role, .focus {
+  font-size: 13px; /* Adjusted font size for better legibility */
+  color: #d0d0d0; /* Softer gray for role and focus text */
 }
 
-/* Responsive styles for mobile view */
-@media (max-width: 768px) {
-  .soccer-pitch {
-    padding: 10px; /* Adjust padding for mobile */
-  }
-
-  .position {
-    max-width: 100px; /* Smaller max-width on mobile */
-    font-size: 12px; /* Smaller font size */
-  }
-
-  .position-abbreviation {
-    font-size: 16px; /* Smaller abbreviation font size */
-  }
-
-  .position-info {
-    font-size: 10px; /* Smaller info font size */
-  }
-
-  .position-info .carousel-text {
-    animation-duration: 7s; /* Faster animation on mobile */
-  }
+/* Add smoother transition for hover and selected effects */
+.position.selected, .position:hover {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }

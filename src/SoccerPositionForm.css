@@ -1,141 +1,79 @@
-/* General Styles */
-.details-page-container {
-    padding: 1rem;
-    box-sizing: border-box;
-  }
-  
-  /* Mobile Styles */
-  @media (max-width: 600px) {
-    .form__group {
-      width: 100%;
-    }
-  
-    .tactic-details {
-      display: flex;
-      flex-direction: column;
-    }
-  
-    .form__field {
-      font-size: 1rem;
-    }
-  
-    .form__label {
-      font-size: 0.9rem;
-      top: -10px;
-    }
-  
-    .option-selector {
-      flex-direction: column;
-    }
-  
-    .position-container {
-      margin-bottom: 1rem;
-      padding: 1rem;
-    }
-  
-    .dropdown-container {
-      flex-direction: column;
-    }
-  
-    .positions-grid {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  
-    .position-container {
-      flex: 1 1 45%; /* Adjusts for better fit on small screens */
-      margin: 0.5rem;
-    }
-  
-    .dropdown-container select {
-      width: 100%;
-      margin-bottom: 0.5rem;
-    }
-  }
-  
-  /* Desktop Styles */
-  .form__group {
-    position: relative;
-    padding: 15px 0 0;
-    margin-top: 10px;
-    width: 50%;
-    white-space: nowrap; /* Prevents the labels from wrapping */
-  }
-  
-  .form__field {
-    font-family: inherit;
-    width: 100%;
-    border: 0;
-    border-bottom: 2px solid var(--input-border-color, #9b9b9b);
-    outline: 0;
-    font-size: 1.3rem;
-    color: var(--input-text-color, #333333); /* Dark grey in light mode */
-    padding: 7px 0;
-    background: transparent;
-    transition: border-color 0.2s;
-  }
-  
-  .form__field::placeholder {
-    color: transparent;
-  }
-  
-  .form__field:placeholder-shown ~ .form__label {
-    font-size: 1.3rem;
-    cursor: text;
-    top: 20px;
-  }
-  
-  .form__label {
-    position: absolute;
-    top: 0;
-    display: block;
-    transition: 0.2s;
-    font-size: 1rem;
-    color: var(--input-label-color, #9b9b9b);
-    white-space: nowrap; /* Prevents the label from wrapping */
-  }
-  
-  .form__field:focus ~ .form__label {
-    position: absolute;
-    top: 0;
-    display: block;
-    transition: 0.2s;
-    font-size: 1rem;
-    color: var(--input-focus-color, #11998e);
-    font-weight: 700;
-  }
-  
-  .form__field:focus {
-    padding-bottom: 6px;
-    font-weight: 700;
-    border-width: 3px;
-    border-image: linear-gradient(to right, var(--input-focus-gradient-start, #11998e), var(--input-focus-gradient-end, #38ef7d));
-    border-image-slice: 1;
-  }
-  
-  /* reset input */
-  .form__field:required,
-  .form__field:invalid {
-    box-shadow: none;
-  }
-  
-  /* Light Mode */
-  :root {
-    --input-border-color: #9b9b9b;
-    --input-text-color: #333333; /* Dark grey for light mode */
-    --input-label-color: #9b9b9b;
-    --input-focus-color: #11998e;
-    --input-focus-gradient-start: #11998e;
-    --input-focus-gradient-end: #38ef7d;
-  }
-  
-  /* Dark Mode */
-  [data-theme="dark"] {
-    --input-border-color: #444444;
-    --input-text-color: #ffffff; /* White text for dark mode */
-    --input-label-color: #bbbbbb;
-    --input-focus-color: #38ef7d;
-    --input-focus-gradient-start: #38ef7d;
-    --input-focus-gradient-end: #11998e;
-  }
-  
+.soccer-position-form-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.view-toggle-width {
+  display: flex;
+  justify-content: center;
+}
+
+.view-toggle {
+  display: flex;
+  margin: 10px 0;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  margin: 0 5px;
+  border-radius: 4px;
+}
+
+.tab.active {
+  background-color: #bbb;
+}
+
+.tactic-row-thingy {
+  display: flex;
+  flex: 1;
+}
+
+.pitch-section {
+  flex: 2;
+  padding: 20px;
+}
+
+.sidebar {
+  flex: 1;
+  padding: 20px;
+  border-left: 2px solid #ddd;
+}
+
+.tactic-info, .position-details {
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-field {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.formation-list {
+  margin-top: 20px;
+}
+
+.formation-list button {
+  background-color: #008cba;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formation-list button:hover {
+  background-color: #005f6b;
+}
