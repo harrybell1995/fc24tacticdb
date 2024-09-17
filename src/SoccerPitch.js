@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './SoccerPitch.css';
 
-const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) => {
+const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition, formationName }) => {
   const [expandedPosition, setExpandedPosition] = useState(null);
 
   const handlePositionClick = (position) => {
@@ -28,21 +28,21 @@ const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) =
     'Center Back (CB)': { bottom: '25%', left: '50%', transform: 'translateX(-50%)' },
     'Left Center Back (LCB)': { bottom: '25%', left: '25%' },
     'Right Center Back (RCB)': { bottom: '25%', right: '25%' },
-    'Left Back (LB)': { bottom: '30%', left: '10%' },
-    'Right Back (RB)': { bottom: '30%', right: '10%' },
+    'Left Back (LB)': { bottom: '30%', left: '5%' },
+    'Right Back (RB)': { bottom: '30%', right: '5%' },
     'Defensive Midfielder (CDM)': { bottom: '45%', left: '50%', transform: 'translateX(-50%)' },
     'Left Defensive Midfielder (LDM)': { bottom: '45%', left: '25%' },
     'Right Defensive Midfielder (RDM)': { bottom: '45%', right: '25%' },
     'Central Midfielder (CM)': { bottom: '50%', left: '50%', transform: 'translateX(-50%)' },
     'Left Central Midfielder (LCM)': { bottom: '50%', left: '25%' },
-    'Left Midfielder (LM)': { bottom: '55%', left: '10%' },
-    'Right Midfielder (RM)': { bottom: '55%', right: '10%' },
+    'Left Midfielder (LM)': { bottom: '55%', left: '5%' },
+    'Right Midfielder (RM)': { bottom: '55%', right: '5%' },
     'Right Central Midfielder (RCM)': { bottom: '50%', right: '25%' },
     'Attacking Midfielder (CAM)': { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
     'Left Attacking Midfielder (LCAM)': { bottom: '65%', left: '20%' },
     'Right Attacking Midfielder (RCAM)': { bottom: '65%', right: '20%' },
-    'Left Winger (LW)': { bottom: '75%', left: '10%' },
-    'Right Winger (RW)': { bottom: '75%', right: '10%' },
+    'Left Winger (LW)': { bottom: '75%', left: '5%' },
+    'Right Winger (RW)': { bottom: '75%', right: '5%' },
     'Striker (ST)': { bottom: '80%', left: '50%', transform: 'translateX(-50%)' },
     'Left Striker (LST)': { bottom: '80%', left: '30%' },
     'Right Striker (RST)': { bottom: '80%', right: '30%' }
@@ -54,6 +54,7 @@ const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) =
         {/* This is the pitch background with gradient and pattern */}
       </div>
       <div className="positions-container" onClick={(e) => e.stopPropagation()}>
+        <div className="formation-name">{formationName}</div>
         {Object.keys(selectedPositions).map((position) => {
           const { role, focus } = selectedPositions[position] || {};
           const isSelected = position === expandedPosition;

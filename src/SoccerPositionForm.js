@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SoccerPitch from './SoccerPitch';
 import './SoccerPositionForm.css';
 import { roles, focuses, options, formations } from './SoccerData';
+import supabase from './supabaseClient'; // Import Supabase client
 
 const SoccerPositionForm = () => {
   const [selectedPositions, setSelectedPositions] = useState({});
@@ -13,7 +14,10 @@ const SoccerPositionForm = () => {
     defensiveapproach: options.defensiveapproach[0],
     clubcountry: '',
     league: '',
-    tacticalpreset: options.tacticalpreset[0]
+    tacticalpreset: options.tacticalpreset[0],
+    tacticname: '',
+    notes: '',
+    club: ''
   });
   const [activeTab, setActiveTab] = useState('tactic-info');
   const [selectedPosition, setSelectedPosition] = useState(null);
@@ -54,6 +58,28 @@ const SoccerPositionForm = () => {
     }));
   };
 
+  const handleSubmit = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('testtable')
+        .insert([{
+          ...formData,
+          positions: JSON.stringify(selectedPositions),
+          formation: '4-4-2' // Use the current formation or adjust as needed
+        }]);
+      
+      if (error) {
+        throw error;
+      }
+      
+      console.log('Data submitted:', data);
+      // Optionally, you can show a success message or clear the form here
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      // Optionally, you can show an error message here
+    }
+  };
+
   return (
     <div className="soccer-position-form-container">
       <div className="tactic-row-thingy">
@@ -87,21 +113,68 @@ const SoccerPositionForm = () => {
           {activeTab === 'tactic-info' && (
             <div className="tactic-info">
               <h3>Tactic Info</h3>
-              {['manager', 'year', 'tacticsharecode', 'clubcountry', 'league'].map((field) => (
-                <div key={field} className="form-group">
-                  <input
-                    type="text"
-                    name={field}
-                    id={field}
-                    className="form-field"
-                    value={formData[field]}
-                    onChange={handleInputChange}
-                    placeholder={`Enter ${field}`}
-                    required
-                  />
-                  <label htmlFor={field}>{field}</label>
-                </div>
-              ))}
+              {['manager', 'year', 'tacticsharecode', 'club', 'clubcountry', 'league', 'tacticname', 'notes'].map((field) => (
+              <div key={field} className="form-group">
+                <input
+                  type="text"
+                  name={field}
+                  id={field}
+                  className="form-field"
+                  value={formData[field]}
+                  onChange={handleInputChange}
+                  placeholder={
+                    field === 'manager' ? 'Manager Name' :
+                    field === 'year' ? 'Year' :
+                    field === 'tacticsharecode' ? 'Tactic Share Code' :
+                    field === 'club' ? 'Club Name' :
+                    field === 'clubcountry' ? 'Club Country' :
+                    field === 'league' ? 'League' :
+                    field === 'tacticname' ? 'Tactic Name' :
+                    'Notes'
+                  }
+                  required
+                />
+              </div>
+            ))}
+              <div className="form-group">
+                <label htmlFor="buildupstyle">Buildup Style</label>
+                <select
+                  id="buildupstyle"
+                  name="buildupstyle"
+                  value={formData.buildupstyle}
+                  onChange={handleInputChange}
+                >
+                  {options.buildupstyle.map(style => (
+                    <option key={style} value={style}>{style}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="defensiveapproach">Defensive Approach</label>
+                <select
+                  id="defensiveapproach"
+                  name="defensiveapproach"
+                  value={formData.defensiveapproach}
+                  onChange={handleInputChange}
+                >
+                  {options.defensiveapproach.map(approach => (
+                    <option key={approach} value={approach}>{approach}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="tacticalpreset">Tactical Preset</label>
+                <select
+                  id="tacticalpreset"
+                  name="tacticalpreset"
+                  value={formData.tacticalpreset}
+                  onChange={handleInputChange}
+                >
+                  {options.tacticalpreset.map(preset => (
+                    <option key={preset} value={preset}>{preset}</option>
+                  ))}
+                </select>
+              </div>
               <div className="formation-list">
                 <h3>Formations</h3>
                 {Object.keys(formations).map((formation) => (
@@ -113,6 +186,7 @@ const SoccerPositionForm = () => {
                   </button>
                 ))}
               </div>
+              <button onClick={handleSubmit}>Submit</button>
             </div>
           )}
 
@@ -145,7 +219,6 @@ const SoccerPositionForm = () => {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </div>

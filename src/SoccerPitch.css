@@ -164,3 +164,15 @@
     padding-left: 5px;
   }
 }
+
+
+.formation-name {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  font-size: 24px; /* Adjust size as needed */
+  font-weight: bold;
+  color: #fff; /* Adjust color as needed */
+  background: rgba(0, 0, 0, 0.5); /* Optional: Adds a background for better visibility */
+  padding: 5px; /* Optional: Adds padding around the text */
+}

@@ -42,13 +42,34 @@
 .sidebar {
   flex: 1;
   padding: 20px;
-  border-left: 2px solid #ddd;
+  max-width: 500px;
 }
 
 .tactic-info, .position-details {
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.form-field {
+  width: 97%;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly opaque */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.form-field::placeholder {
+  color: #777; /* Placeholder text color */
+  font-style: italic; /* Optional */
 }
 
 
@@ -117,12 +138,52 @@
   .sidebar {
     width: 45vh;
     border-left: none; /* Remove border on mobile */
-    border-top: 2px solid #ddd; /* Add border to the top */
     margin-top: 10px; /* Add margin to separate from pitch */
     margin-left: 0px;
   }
 
   .tactic-info, .position-details {
     margin-bottom: 0; /* Remove bottom margin on mobile */
+  }
+}
+
+.tactic-row-thingy {
+  display: flex;
+  justify-content: space-between; /* Space between pitch and sidebar */
+  align-items: flex-start; /* Align the sidebar to the top of the pitch */
+  max-width: 1200px; /* Max width for the content */
+  margin: 0 auto;
+  padding: 20px; /* Same padding for both sides */
+}
+
+.pitch-section {
+  flex: 1; /* Allow the pitch section to take up remaining space */
+  display: flex;
+  justify-content: flex-end; /* Move the soccer-pitch to the right side of the container */
+}
+
+.soccer-pitch {
+  width: 100%; /* Ensure the soccer-pitch fits within its container */
+  max-width: 700px; /* Limit the width of the pitch for design purposes */
+}
+
+.sidebar {
+  flex-basis: 350px; /* Fixed width for the sidebar */
+  margin-left: 20px; /* Space between the pitch and sidebar */
+}
+
+@media (max-width: 768px) {
+  .tactic-row-thingy {
+    flex-direction: column; /* Stack pitch and sidebar on mobile */
+    padding: 10px; /* Smaller padding on mobile */
+  }
+
+  .pitch-section,
+  .sidebar {
+    margin: 0; /* Remove margins when stacked */
+  }
+
+  .pitch-section {
+    justify-content: center; /* Center pitch on mobile */
   }
 }
