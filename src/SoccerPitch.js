@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './SoccerPitch.css';
 
 const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) => {
+  const [expandedPosition, setExpandedPosition] = useState(null);
+
+  const handlePositionClick = (position) => {
+    if (expandedPosition === position) {
+      setExpandedPosition(null); // Collapse if already selected
+    } else {
+      setExpandedPosition(position); // Expand the clicked position
+    }
+    onPositionClick(position);
+  };
+
+  // Handle clicks outside the positions to reset expanded state
+  const handleClickOutside = () => {
+    setExpandedPosition(null);
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const positionStyles = {
     'Goalkeeper (GK)': { bottom: '10%', left: '50%', transform: 'translateX(-50%)' },
     'Center Back (CB)': { bottom: '25%', left: '50%', transform: 'translateX(-50%)' },
@@ -9,15 +30,15 @@ const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) =
     'Right Center Back (RCB)': { bottom: '25%', right: '25%' },
     'Left Back (LB)': { bottom: '30%', left: '10%' },
     'Right Back (RB)': { bottom: '30%', right: '10%' },
-    'Defensive Midfielder (CDM)': { bottom: '40%', left: '50%', transform: 'translateX(-50%)' },
-    'Left Defensive Midfielder (LDM)': { bottom: '40%', left: '20%' },
-    'Right Defensive Midfielder (RDM)': { bottom: '40%', right: '20%' },
+    'Defensive Midfielder (CDM)': { bottom: '45%', left: '50%', transform: 'translateX(-50%)' },
+    'Left Defensive Midfielder (LDM)': { bottom: '45%', left: '25%' },
+    'Right Defensive Midfielder (RDM)': { bottom: '45%', right: '25%' },
     'Central Midfielder (CM)': { bottom: '50%', left: '50%', transform: 'translateX(-50%)' },
     'Left Central Midfielder (LCM)': { bottom: '50%', left: '25%' },
-    'Left Midfielder (LM)': { bottom: '60%', left: '10%' },
-    'Right Midfielder (RM)': { bottom: '60%', right: '10%' },
+    'Left Midfielder (LM)': { bottom: '55%', left: '10%' },
+    'Right Midfielder (RM)': { bottom: '55%', right: '10%' },
     'Right Central Midfielder (RCM)': { bottom: '50%', right: '25%' },
-    'Attacking Midfielder (CAM)': { bottom: '65%', left: '50%' },
+    'Attacking Midfielder (CAM)': { bottom: '60%', left: '50%', transform: 'translateX(-50%)' },
     'Left Attacking Midfielder (LCAM)': { bottom: '65%', left: '20%' },
     'Right Attacking Midfielder (RCAM)': { bottom: '65%', right: '20%' },
     'Left Winger (LW)': { bottom: '75%', left: '10%' },
@@ -32,17 +53,20 @@ const SoccerPitch = ({ selectedPositions, onPositionClick, selectedPosition }) =
       <div className="pitch">
         {/* This is the pitch background with gradient and pattern */}
       </div>
-      <div className="positions-container">
+      <div className="positions-container" onClick={(e) => e.stopPropagation()}>
         {Object.keys(selectedPositions).map((position) => {
           const { role, focus } = selectedPositions[position] || {};
-          const isSelected = position === selectedPosition;
+          const isSelected = position === expandedPosition;
 
           return (
             <div
               key={position}
               className={`position ${isSelected ? 'selected' : ''}`}
               style={positionStyles[position]}
-              onClick={() => onPositionClick(position)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevents triggering the outside click
+                handlePositionClick(position);
+              }}
             >
               <div className="position-info">
                 <div className="position-abbreviation">

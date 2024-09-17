@@ -1,8 +1,12 @@
 .soccer-position-form-container {
   display: flex;
-  flex-direction: column;
-  height: 100%;
+  flex-direction: row;
+  justify-content: center; /* Center the content horizontally */
+  align-items: center; /* Center the sidebar vertically with the pitch */
+  height: 100%; /* Full height */
 }
+
+
 
 .view-toggle-width {
   display: flex;
@@ -32,7 +36,7 @@
 
 .pitch-section {
   flex: 2;
-  padding: 20px;
+  padding-top: 20px;
 }
 
 .sidebar {
@@ -45,7 +49,6 @@
   border-radius: 8px;
   padding: 15px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
 }
 
 
@@ -76,4 +79,50 @@
 
 .formation-list button:hover {
   background-color: #005f6b;
+}
+
+@media (max-width: 768px) {
+  .soccer-position-form-container {
+    flex-direction: column;
+  }
+
+  .view-toggle-width {
+    display: flex;
+    justify-content: center;
+  }
+
+  .view-toggle {
+    display: flex;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .tab.active {
+    background-color: #bbb;
+  }
+
+  .tactic-row-thingy {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pitch-section {
+    flex: 1;
+  }
+
+  .sidebar {
+    width: 45vh;
+    border-left: none; /* Remove border on mobile */
+    border-top: 2px solid #ddd; /* Add border to the top */
+    margin-top: 10px; /* Add margin to separate from pitch */
+    margin-left: 0px;
+  }
+
+  .tactic-info, .position-details {
+    margin-bottom: 0; /* Remove bottom margin on mobile */
+  }
 }

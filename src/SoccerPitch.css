@@ -1,15 +1,18 @@
-/* Container for the entire pitch and sidebar layout */
+/* Base styles */
 .soccer-pitch {
   position: relative;
   width: 100%;
+  max-width: 750px; /* Maximum width for PC resembling a football field */
   height: 100%;
+  max-height: 1200px; /* Proportional height for football field shape */
   display: flex;
+  margin: 0 auto; /* Center the pitch on PC */
 }
 
 .pitch {
   position: relative;
   width: 100%;
-  height: 80vh; /* Adjust as needed */
+  height: 80vh; /* Maintain the height relative to the viewport */
   background: linear-gradient(
     rgba(0, 100, 0, 0.8), /* Dark green with opacity */
     rgba(0, 100, 0, 0)    /* Fully transparent */
@@ -51,7 +54,7 @@
 .position {
   position: absolute;
   width: 110px; /* Increased width for better visibility */
-  height: 125px; /* Adjusted height to maintain hexagonal proportions */
+  height: 110px; /* Adjusted height to maintain hexagonal proportions */
   background: linear-gradient(145deg, #2c2c2c, #1a1a1a); /* Subtle dark gradient */
   color: #fff;
   clip-path: polygon(
@@ -73,7 +76,8 @@
   box-sizing: border-box;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add subtle shadow for depth */
   background-color: #3b3b3b; /* Slightly lighter shade on hover */
-
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .position:hover {
@@ -86,7 +90,9 @@
   background-color: #4caf50; /* A softer green to indicate selection */
   border-color: #4caf50;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Stronger shadow for emphasis */
-  transform: translateY(-5px); /* Lift effect for selected position */
+  opacity: 1;
+  transform: scale(1.5); /* Scale the card when selected */
+  z-index: 10; /* Ensure it's on top of others */
 }
 
 /* Refined typography and layout for the position information */
@@ -120,7 +126,41 @@
   color: #d0d0d0; /* Softer gray for role and focus text */
 }
 
-/* Add smoother transition for hover and selected effects */
-.position.selected, .position:hover {
-  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+/* Make cards narrower and responsive on mobile */
+@media (max-width: 768px) {
+  .soccer-pitch {
+    width: 100%;
+    max-width: none; /* Make pitch 100% of mobile width */
+  }
+
+  .position {
+    width: 80px; /* Make the card narrower */
+    height: 100px; /* Adjust height */
+    transition: all 0.3s ease; /* Smooth transition for any changes */
+  }
+
+  /* When a card is clicked, it expands and other cards shrink */
+  .position.selected {
+    width: 120px; /* Expand when selected */
+    height: 150px;
+    z-index: 10; /* Bring to front */
+    transform: scale(1.2); /* Slight enlargement */
+  }
+
+  .position:not(.selected) {
+    opacity: 0.7; /* Fade other cards */
+  }
+
+  /* Handle long text overflow on mobile */
+  .position .role, .position .focus {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center; /* Center align by default */
+  }
+
+  .position .role.long-text, .position .focus.long-text {
+    text-align: left;
+    padding-left: 5px;
+  }
 }

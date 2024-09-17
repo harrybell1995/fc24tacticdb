@@ -19,14 +19,13 @@ const SoccerPositionForm = () => {
   const [selectedPosition, setSelectedPosition] = useState(null);
 
   useEffect(() => {
-    // Default to 4-4-2 formation
     setSelectedPositions(formations['4-4-2']);
   }, []);
 
   const handleFormationSelect = (formation) => {
     setSelectedPositions(formations[formation]);
-    setSelectedPosition(null); // Reset selected position when changing formation
-    setActiveTab('tactic-info'); // Switch back to tactic-info tab
+    setSelectedPosition(null);
+    setActiveTab('tactic-info');
   };
 
   const handleInputChange = (e) => {
@@ -57,24 +56,6 @@ const SoccerPositionForm = () => {
 
   return (
     <div className="soccer-position-form-container">
-      <div className="view-toggle-width">
-        <div className="view-toggle">
-          <div
-            className={`tab ${activeTab === 'tactic-info' ? 'active' : ''}`}
-            onClick={() => setActiveTab('tactic-info')}
-          >
-            Tactic Info
-          </div>
-          <div
-            className={`tab ${activeTab === 'position-info' ? 'active' : ''}`}
-            onClick={() => setActiveTab('position-info')}
-            disabled={!selectedPosition} // Disable if no position is selected
-          >
-            Position Info
-          </div>
-        </div>
-      </div>
-      
       <div className="tactic-row-thingy">
         <div className="pitch-section">
           <SoccerPitch
@@ -85,6 +66,24 @@ const SoccerPositionForm = () => {
         </div>
 
         <div className="sidebar">
+          <div className="view-toggle-width">
+            <div className="view-toggle">
+              <div
+                className={`tab ${activeTab === 'tactic-info' ? 'active' : ''}`}
+                onClick={() => setActiveTab('tactic-info')}
+              >
+                Tactic Info
+              </div>
+              <div
+                className={`tab ${activeTab === 'position-info' ? 'active' : ''}`}
+                onClick={() => setActiveTab('position-info')}
+                disabled={!selectedPosition}
+              >
+                Position Info
+              </div>
+            </div>
+          </div>
+
           {activeTab === 'tactic-info' && (
             <div className="tactic-info">
               <h3>Tactic Info</h3>
@@ -103,6 +102,17 @@ const SoccerPositionForm = () => {
                   <label htmlFor={field}>{field}</label>
                 </div>
               ))}
+              <div className="formation-list">
+                <h3>Formations</h3>
+                {Object.keys(formations).map((formation) => (
+                  <button
+                    key={formation}
+                    onClick={() => handleFormationSelect(formation)}
+                  >
+                    {formation}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -136,17 +146,6 @@ const SoccerPositionForm = () => {
             </div>
           )}
 
-          <div className="formation-list">
-            <h3>Formations</h3>
-            {Object.keys(formations).map((formation) => (
-              <button
-                key={formation}
-                onClick={() => handleFormationSelect(formation)}
-              >
-                {formation}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 function Navbar({ darkMode, toggleDarkMode }) {
@@ -28,18 +28,16 @@ function Navbar({ darkMode, toggleDarkMode }) {
   };
 
   return (
-    <nav className="navbar">
-      {/* Hamburger Menu */}
+    <nav className={`navbar ${darkMode ? 'dark' : ''}`}>
       <button className="hamburger-menu" onClick={handleMenuToggle}>
         &#9776;
       </button>
 
-      {/* Navbar Links */}
       <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
-        <Link to="/">Home</Link>
-        <Link to="/create">Create Tactic</Link>
-        <Link to="/random-tactics">Tactics List</Link>
-        <Link to="/decades/2020s">Decades</Link>
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/create" className="nav-link">Create Tactic</Link>
+        <Link to="/random-tactics" className="nav-link">Tactics List</Link>
+        <Link to="/decades/2020s" className="nav-link">Decades</Link>
         <section className="search-box">
           <input
             type="text"
@@ -52,7 +50,6 @@ function Navbar({ darkMode, toggleDarkMode }) {
         </section>
       </div>
 
-      {/* Night Mode Toggle */}
       <button className="night-mode-icon" onClick={toggleDarkMode}>
         {darkMode ? '🌙' : '☀️'}
       </button>
