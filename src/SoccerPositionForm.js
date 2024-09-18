@@ -58,22 +58,42 @@ const SoccerPositionForm = () => {
     }));
   };
 
+  // Convert selectedPositions to the required format
+  const formatPositions = () => {
+    const formatted = {};
+    Object.keys(selectedPositions).forEach(position => {
+      const { role, focus } = selectedPositions[position];
+      if (role && focus) {
+        formatted[position] = [role, focus];
+      }
+    });
+    return formatted;
+  };
+
   const handleSubmit = async () => {
     try {
+      // Format the selected positions
+      const formattedPositions = formatPositions();
+      
       const { data, error } = await supabase
         .from('testtable')
         .insert([{
           ...formData,
-          positions: JSON.stringify(selectedPositions),
+          positions: formattedPositions,
           formation: '4-4-2' // Use the current formation or adjust as needed
         }]);
       
       if (error) {
         throw error;
       }
-      
+
       console.log('Data submitted:', data);
-      // Optionally, you can show a success message or clear the form here
+      
+      // Show success notification
+      alert('Tactic has been successfully submitted!');
+      
+      // Refresh the page
+      window.location.reload();
     } catch (error) {
       console.error('Error submitting data:', error);
       // Optionally, you can show an error message here
@@ -112,7 +132,7 @@ const SoccerPositionForm = () => {
 
           {activeTab === 'tactic-info' && (
             <div className="tactic-info">
-              <h3>Submit new tactic</h3>
+              <h3>Submit a new tactic</h3>
               {['manager', 'year', 'tacticsharecode', 'club', 'clubcountry', 'league', 'tacticname', 'notes'].map((field) => (
               <div key={field} className="form-group">
                 <input
