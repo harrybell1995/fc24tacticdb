@@ -16,7 +16,7 @@ const SoccerPositionForm = () => {
     league: '',
     tacticalpreset: options.tacticalpreset[0],
     tacticname: '',
-    notes: '',
+    notes: '', // Renamed notes to description
     club: ''
   });
   const [activeTab, setActiveTab] = useState('tactic-info');
@@ -74,7 +74,7 @@ const SoccerPositionForm = () => {
     try {
       // Format the selected positions
       const formattedPositions = formatPositions();
-      
+
       const { data, error } = await supabase
         .from('testtable')
         .insert([{
@@ -82,16 +82,16 @@ const SoccerPositionForm = () => {
           positions: formattedPositions,
           formation: '4-4-2' // Use the current formation or adjust as needed
         }]);
-      
+
       if (error) {
         throw error;
       }
 
       console.log('Data submitted:', data);
-      
+
       // Show success notification
       alert('Tactic has been successfully submitted!');
-      
+
       // Refresh the page
       window.location.reload();
     } catch (error) {
@@ -134,28 +134,28 @@ const SoccerPositionForm = () => {
             <div className="tactic-info">
               <h3>Submit a new tactic</h3>
               {['manager', 'year', 'tacticsharecode', 'club', 'clubcountry', 'league', 'tacticname', 'notes'].map((field) => (
-              <div key={field} className="form-group">
-                <input
-                  type="text"
-                  name={field}
-                  id={field}
-                  className="form-field"
-                  value={formData[field]}
-                  onChange={handleInputChange}
-                  placeholder={
-                    field === 'manager' ? 'Manager Name' :
-                    field === 'year' ? 'Year' :
-                    field === 'tacticsharecode' ? 'Tactic Share Code' :
-                    field === 'club' ? 'Club Name' :
-                    field === 'clubcountry' ? 'Club Country' :
-                    field === 'league' ? 'League' :
-                    field === 'tacticname' ? 'Tactic Name' :
-                    'Notes'
-                  }
-                  required
-                />
-              </div>
-            ))}
+                <div key={field} className="form-group">
+                  <input
+                    type="text"
+                    name={field}
+                    id={field}
+                    className="form-field"
+                    value={formData[field]}
+                    onChange={handleInputChange}
+                    placeholder={
+                      field === 'manager' ? 'Manager Name' :
+                      field === 'year' ? 'Year' :
+                      field === 'tacticsharecode' ? 'Tactic Share Code' :
+                      field === 'club' ? 'Club Name' :
+                      field === 'clubcountry' ? 'Club Country' :
+                      field === 'league' ? 'League' :
+                      field === 'tacticname' ? 'Tactic Name' :
+                      'Description'
+                    }
+                    required
+                  />
+                </div>
+              ))}
               <div className="form-group">
                 <label htmlFor="buildupstyle">Buildup Style</label>
                 <select
@@ -163,6 +163,7 @@ const SoccerPositionForm = () => {
                   name="buildupstyle"
                   value={formData.buildupstyle}
                   onChange={handleInputChange}
+                  required
                 >
                   {options.buildupstyle.map(style => (
                     <option key={style} value={style}>{style}</option>
@@ -176,6 +177,7 @@ const SoccerPositionForm = () => {
                   name="defensiveapproach"
                   value={formData.defensiveapproach}
                   onChange={handleInputChange}
+                  required
                 >
                   {options.defensiveapproach.map(approach => (
                     <option key={approach} value={approach}>{approach}</option>
@@ -189,6 +191,7 @@ const SoccerPositionForm = () => {
                   name="tacticalpreset"
                   value={formData.tacticalpreset}
                   onChange={handleInputChange}
+                  required
                 >
                   {options.tacticalpreset.map(preset => (
                     <option key={preset} value={preset}>{preset}</option>
@@ -219,6 +222,7 @@ const SoccerPositionForm = () => {
                   id="role"
                   value={selectedPositions[selectedPosition]?.role || ''}
                   onChange={handleRoleChange}
+                  required
                 >
                   {(roles[selectedPosition] || []).map(role => (
                     <option key={role} value={role}>{role}</option>
@@ -231,6 +235,7 @@ const SoccerPositionForm = () => {
                   id="focus"
                   value={selectedPositions[selectedPosition]?.focus || ''}
                   onChange={handleFocusChange}
+                  required
                 >
                   {focuses.map(focus => (
                     <option key={focus} value={focus}>{focus}</option>
