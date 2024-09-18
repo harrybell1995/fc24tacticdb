@@ -112,7 +112,7 @@ const SoccerPositionForm = () => {
 
           {activeTab === 'tactic-info' && (
             <div className="tactic-info">
-              <h3>Tactic Info</h3>
+              <h3>Submit new tactic</h3>
               {['manager', 'year', 'tacticsharecode', 'club', 'clubcountry', 'league', 'tacticname', 'notes'].map((field) => (
               <div key={field} className="form-group">
                 <input

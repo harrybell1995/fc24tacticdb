@@ -7,6 +7,10 @@
   max-height: 1200px; /* Proportional height for football field shape */
   display: flex;
   margin: 0 auto; /* Center the pitch on PC */
+  background: url('./assets/pitch.png') no-repeat center;
+  background-size: cover;
+  transform: rotateX(5deg); /* Tilt the background image slightly away */
+
 }
 
 .pitch {
@@ -14,8 +18,8 @@
   width: 100%;
   height: 80vh; /* Maintain the height relative to the viewport */
   background: linear-gradient(
-    rgba(0, 100, 0, 0.8), /* Dark green with opacity */
-    rgba(0, 100, 0, 0)    /* Fully transparent */
+    rgba(0, 100, 0, 0) ,   /* Fully transparent */
+    rgba(0, 56, 0, 0.8) /* Dark green with opacity */
   );
   overflow: hidden;
   z-index: 1; /* Ensure pitch background is below the positions */
@@ -148,7 +152,7 @@
   }
 
   .position:not(.selected) {
-    opacity: 0.7; /* Fade other cards */
+    opacity: 0.9; /* Fade other cards */
   }
 
   /* Handle long text overflow on mobile */
@@ -162,6 +166,15 @@
   .position .role.long-text, .position .focus.long-text {
     text-align: left;
     padding-left: 5px;
+  }
+
+  .pitch-section{
+    width: 100%;
+    margin-left: 0px;
+  }
+
+  .tactic-row-thingy{
+    padding: px;
   }
 }
 

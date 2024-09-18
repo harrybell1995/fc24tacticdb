@@ -54,7 +54,41 @@
 .form-group {
   margin-bottom: 15px;
   position: relative;
+  width: 96%;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: 'Arial', sans-serif;
 }
+
+.form-group label {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-group select {
+  width: 105%;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+  color: #333;
+}
+
+.form-group select:focus {
+  border-color: #007BFF;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-group select option {
+  padding: 0.5rem;
+}
+
 
 .form-field {
   width: 97%;
@@ -172,10 +206,12 @@
   margin-left: 20px; /* Space between the pitch and sidebar */
 }
 
+
+
 @media (max-width: 768px) {
   .tactic-row-thingy {
     flex-direction: column; /* Stack pitch and sidebar on mobile */
-    padding: 10px; /* Smaller padding on mobile */
+    padding: 0px; /* Smaller padding on mobile */
   }
 
   .pitch-section,

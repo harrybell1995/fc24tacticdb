@@ -215,6 +215,15 @@ td {
 }
 
 /* Night mode icon styling */
+.night-mode-icon {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--nav-link-color);
+  cursor: pointer;
+  position: absolute;
+  right: 20px; /* Position on the right */
+}
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
