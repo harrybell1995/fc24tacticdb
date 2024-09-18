@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import supabase from './supabaseClient';
 import SoccerPitch from './SoccerPitch';
+import './SoccerPositionForm.css';
 
 const DetailsPage = () => {
   const { tacticsharecode } = useParams();
@@ -65,17 +66,54 @@ const DetailsPage = () => {
   };
 
   return (
-    <div className="details-page-container">
+  <div className="soccer-position-form-container">
+    <div className="tactic-row-thingy">
+
+      {activeTab === 'pitch' && (
+        <div className="pitch-section">
+          <SoccerPitch selectedPositions={positionsObject} />
+        </div>
+      )}
+
+      {activeTab === 'positions' && (
+        <div className="sidebar">
+          {Object.keys(positionsObject).map((position) => {
+            const { role, focus } = positionsObject[position];
+            return (
+              <div
+                key={position}
+                className="position-info"
+                style={{
+                  backgroundColor: getPositionColor(position),
+                }}
+              >
+                <div className="position-abbreviation">
+                  {position.match(/\((.*?)\)/)[1]}
+                </div>
+                <div className="position-role">
+                  Role: {role}
+                </div>
+                <div className="position-focus">
+                  Focus: {focus}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="sidebar">
       <div className="view-toggle-width">
         <div className="view-toggle">
-          <div className={`tab ${activeTab === 'pitch' ? 'active' : ''}`} onClick={() => setActiveTab('pitch')}>Pitch
+          <div className={`tab ${activeTab === 'pitch' ? 'active' : ''}`} onClick={() => setActiveTab('pitch')}>
+            Pitch
           </div>
-          <div className={`tab ${activeTab === 'positions' ? 'active' : ''}`} onClick={() => setActiveTab('positions')}          >
+          <div className={`tab ${activeTab === 'positions' ? 'active' : ''}`} onClick={() => setActiveTab('positions')}>
             Positions
           </div>
         </div>
       </div>
-      <div className="tactic-row-thingy">        
+
         <div className="tactic-details">
           <ul className="tactic-details-list">
             <li><strong>Manager Name:</strong> {tactic.manager}</li>
@@ -91,44 +129,10 @@ const DetailsPage = () => {
             <li><strong>Tactic Share Code:</strong> {tactic.tacticsharecode}</li>
           </ul>
         </div>
-
-        {activeTab === 'positions' && (
-          <div className="positions-list">
-            {Object.keys(positionsObject).map((position) => {
-              const { role, focus } = positionsObject[position];
-              return (
-                <div
-                  key={position}
-                  className="position-info"
-                  style={{
-                    backgroundColor: getPositionColor(position),
-                  }}
-                >
-                  <div className="position-abbreviation">
-                    {position.match(/\((.*?)\)/)[1]}
-                  </div>
-                  <div className="position-role">
-                    Role: {role}
-                  </div>
-                  <div className="position-focus">
-                    Focus: {focus}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {activeTab === 'pitch' && (
-          <div className="tactic-pitch">
-            <SoccerPitch selectedPositions={positionsObject} />
-          </div>
-        )}
       </div>
-
-
       </div>
-  );
+      </div>
+    );
 };
 
 export default DetailsPage;

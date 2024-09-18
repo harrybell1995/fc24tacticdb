@@ -232,7 +232,12 @@ td {
     align-items: stretch;
     padding: 4px;
   }
-
+  .details-page-container {
+    flex-direction: row;
+    padding: 0px;
+    gap: 20px;
+  }
+  
   .navbar a {
     margin: 5px 0;
     text-align: center;
@@ -267,3 +272,4 @@ td {
 .night-mode-icon {
   margin-top: 10px; /* Space between menu and night mode icon */
 }
+
