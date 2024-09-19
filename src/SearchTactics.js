@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import supabase from './supabaseClient'; // Adjust the import if needed
+import './RandomTacticsTable.css'; // Use the same CSS for table styling
 
 const SearchTactics = () => {
   const [results, setResults] = useState([]);
@@ -60,44 +61,51 @@ const SearchTactics = () => {
   }, [query]);
 
   return (
-    <div className="search-tactics">
+    <div className="random-tactics-table"> {/* Apply consistent styling */}
       <h1>Search Results for "{query}"</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      
-      {results.length === 0 && !loading && <p>No results found.</p>}
-      
-      {results.length > 0 && (
-        <table className="results-table">
-          <thead>
-            <tr>
-              <th>Manager</th>
-              <th>Year</th>
-              <th>Formation</th>
-              <th>Club</th>
-              <th>League</th>
-              <th>Tactic Share Code</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            {results.map((tactic) => (
-              <tr key={tactic.id}>
-                <td>{tactic.manager}</td>
-                <td className={`year-span ${getYearClass(tactic.year)}`}>
-                  {tactic.year}
-                </td>
-                <td>{tactic.formation}</td>
-                <td>{tactic.club}</td>
-                <td>{tactic.league}</td>
-                <td>{tactic.tacticsharecode}</td>
-                <td>
-                  <Link to={`/details/${tactic.tacticsharecode}`}>Details</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <>
+          {results.length === 0 && !loading && <p>No results found.</p>}
+
+          {results.length > 0 && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Tactic Name</th>
+                  <th>Manager</th>
+                  <th>Formation</th>
+                  <th>Year</th>
+                  <th>Tactic Share Code</th>
+                  <th>Club</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((tactic) => (
+                  <tr key={tactic.id}>
+                    <td>{tactic.tacticname}</td>
+                    <td>{tactic.manager}</td>
+                    <td>{tactic.formation}</td>
+                    <td className="year-cell">
+                      <td className={`year-span ${getYearClass(tactic.year)}`}>
+                        {tactic.year}
+                      </td>
+                      </td>
+                    <td className="share-code">{tactic.tacticsharecode}</td>
+                    <td>{tactic.club}</td>
+                    <td>
+                      <Link to={`/details/${tactic.tacticsharecode}`}>Details</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </>
       )}
     </div>
   );

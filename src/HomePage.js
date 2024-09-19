@@ -116,6 +116,7 @@ const HomePage = () => {
                 <h3>{tactic.manager ? tactic.manager : 'Unknown'}'s {tactic.formation ? tactic.formation : 'Unknown'}</h3>
                 <p><strong>Year:</strong> {tactic.year ? tactic.year : 'Unknown'}</p>
                 <p><strong>Club:</strong> {tactic.club ? tactic.club : 'Unknown'}</p>
+                <p><strong>Description:</strong> {tactic.notes ? tactic.notes : 'Unknown'}</p>
                 <Link to={`/details/${tactic.tacticsharecode}`} className="details-link">View Details</Link>
               </div>
             ))}
