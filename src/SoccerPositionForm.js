@@ -16,7 +16,7 @@ const SoccerPositionForm = () => {
     league: '',
     tacticalpreset: options.tacticalpreset[0],
     tacticname: '',
-    notes: '', // Renamed notes to description
+    notes: '', // Notes can be optional
     club: ''
   });
   const [activeTab, setActiveTab] = useState('tactic-info');
@@ -70,7 +70,31 @@ const SoccerPositionForm = () => {
     return formatted;
   };
 
+  // Form validation function
+  const validateForm = () => {
+    // Check for empty fields in formData except 'notes' (optional)
+    for (const key in formData) {
+      if (key !== 'notes' && !formData[key].trim()) {
+        alert(`Please fill in the ${key.replace(/([a-z])([A-Z])/g, '$1 $2')}.`); // Display human-readable field name
+        return false;
+      }
+    }
+
+    // Ensure every position has both a role and focus
+    for (const position in selectedPositions) {
+      const { role, focus } = selectedPositions[position];
+      if (!role || !focus) {
+        alert(`Please select both role and focus for ${position}.`);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) return; // If validation fails, exit
+
     try {
       // Format the selected positions
       const formattedPositions = formatPositions();
@@ -88,15 +112,10 @@ const SoccerPositionForm = () => {
       }
 
       console.log('Data submitted:', data);
-
-      // Show success notification
       alert('Tactic has been successfully submitted!');
-
-      // Refresh the page
       window.location.reload();
     } catch (error) {
       console.error('Error submitting data:', error);
-      // Optionally, you can show an error message here
     }
   };
 
@@ -152,7 +171,7 @@ const SoccerPositionForm = () => {
                       field === 'tacticname' ? 'Tactic Name' :
                       'Description'
                     }
-                    required
+                    required={field !== 'notes'} // Notes is optional
                   />
                 </div>
               ))}
@@ -209,8 +228,8 @@ const SoccerPositionForm = () => {
                   </button>
                 ))}
               </div>
-              <button onClick={handleSubmit}>Submit</button>
-            </div>
+              <button type="submit" class="submit-button">Submit</button>
+              </div>
           )}
 
           {activeTab === 'position-info' && selectedPosition && (

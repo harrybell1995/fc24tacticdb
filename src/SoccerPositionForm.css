@@ -223,3 +223,35 @@
     justify-content: center; /* Center pitch on mobile */
   }
 }
+
+.submit-button {
+  background-color: #007BFF; /* Primary color */
+  color: white; /* White text */
+  border: none; /* No border */
+  padding: 12px 20px; /* Padding around the text */
+  border-radius: 5px; /* Slightly rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem; /* Adjust font size */
+  font-weight: bold; /* Bold text for emphasis */
+  text-transform: uppercase; /* Make the text uppercase */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  width: 100%; /* Make it stretch the full width of its container */
+  margin-top: 10px; /* Space above the button */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+.submit-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Deeper shadow on hover */
+}
+
+.submit-button:active {
+  background-color: #004080; /* Even darker on click */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Maintain shadow on click */
+  transform: scale(0.98); /* Slightly shrink on click for a press effect */
+}
+
+.submit-button:focus {
+  outline: none; /* Remove default outline */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.7); /* Blue glow when focused */
+}
