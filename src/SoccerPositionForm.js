@@ -21,13 +21,14 @@ const SoccerPositionForm = () => {
   });
   const [activeTab, setActiveTab] = useState('tactic-info');
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const [formation, setFormation] = useState('4-4-2'); // New state for formation
 
   useEffect(() => {
-    setSelectedPositions(formations['4-4-2']);
-  }, []);
+    setSelectedPositions(formations[formation]); // Update selected positions based on formation
+  }, [formation]); // Depend on formation state
 
   const handleFormationSelect = (formation) => {
-    setSelectedPositions(formations[formation]);
+    setFormation(formation); // Update the formation state
     setSelectedPosition(null);
     setActiveTab('tactic-info');
   };
@@ -104,7 +105,7 @@ const SoccerPositionForm = () => {
         .insert([{
           ...formData,
           positions: formattedPositions,
-          formation: '4-4-2' // Use the current formation or adjust as needed
+          formation: formation // Use the current formation from the state
         }]);
 
       if (error) {
@@ -228,8 +229,8 @@ const SoccerPositionForm = () => {
                   </button>
                 ))}
               </div>
-              <button type="submit" class="submit-button">Submit</button>
-              </div>
+              <button type="button" className="submit-button" onClick={handleSubmit}>Submit</button>
+            </div>
           )}
 
           {activeTab === 'position-info' && selectedPosition && (
@@ -261,6 +262,7 @@ const SoccerPositionForm = () => {
                   ))}
                 </select>
               </div>
+              <button onClick={() => setActiveTab('tactic-info')}>Back to Tactic Info</button>
             </div>
           )}
         </div>
