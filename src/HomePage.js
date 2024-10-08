@@ -131,9 +131,6 @@ const HomePage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2024 FCTacticsDB. All rights reserved.</p>
-      </footer>
     </div>
   );
 };

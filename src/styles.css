@@ -273,3 +273,45 @@ td {
   margin-top: 10px; /* Space between menu and night mode icon */
 }
 
+.footer {
+  background-color: #1c1c1c;
+  color: #f1f1f1;
+  padding: 20px 0;
+  text-align: center;
+  border-top: 2px solid #555;
+  font-family: 'Arial', sans-serif;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.footer-links a {
+  color: #f1f1f1;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 10px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ff5722; /* Add a nice hover color effect */
+}
+
+.footer-info {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.footer-info p {
+  margin: 5px 0;
+}
+
+.footer-info p:last-child {
+  font-size: 12px;
+  color: #888;
+}
