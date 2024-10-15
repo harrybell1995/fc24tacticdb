@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SoccerPitch from './SoccerPitch';
 import './SoccerPositionForm.css';
-import { roles, focuses, options, formations } from './SoccerData';
+import { roles, focuses, options, formations, roleValidFocusMapping } from './SoccerData'; // Make sure to import the roleValidFocusMapping
 import supabase from './supabaseClient'; // Import Supabase client
 
 const SoccerPositionForm = () => {
@@ -14,7 +14,6 @@ const SoccerPositionForm = () => {
     defensiveapproach: options.defensiveapproach[0],
     clubcountry: '',
     league: '',
-    tacticalpreset: options.tacticalpreset[0],
     tacticname: '',
     notes: '', // Notes can be optional
     club: ''
@@ -22,6 +21,7 @@ const SoccerPositionForm = () => {
   const [activeTab, setActiveTab] = useState('tactic-info');
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [formation, setFormation] = useState('4-4-2'); // New state for formation
+  const [validFocuses, setValidFocuses] = useState([]); // New state for valid focuses
 
   useEffect(() => {
     setSelectedPositions(formations[formation]); // Update selected positions based on formation
@@ -41,6 +41,12 @@ const SoccerPositionForm = () => {
   const handlePositionClick = (position) => {
     setSelectedPosition(position);
     setActiveTab('position-info');
+    // Set valid focuses based on the initially selected position and role
+    const initialRole = selectedPositions[position]?.role;
+    if (initialRole) {
+      const focusesForRole = getValidFocuses(initialRole, position);
+      setValidFocuses(focusesForRole);
+    }
   };
 
   const handleRoleChange = (e) => {
@@ -49,6 +55,11 @@ const SoccerPositionForm = () => {
       ...prev,
       [selectedPosition]: { ...prev[selectedPosition], role: newRole }
     }));
+
+    // Set valid focuses based on selected role
+    const validRoleFocuses = getValidFocuses(newRole, selectedPosition);
+    setValidFocuses(validRoleFocuses);
+    console.log("Valid Focuses:", validRoleFocuses); // Debug log
   };
 
   const handleFocusChange = (e) => {
@@ -57,6 +68,11 @@ const SoccerPositionForm = () => {
       ...prev,
       [selectedPosition]: { ...prev[selectedPosition], focus: newFocus }
     }));
+  };
+
+  const getValidFocuses = (role, position) => {
+    const focusesForRole = roleValidFocusMapping[position]?.[role] || [];
+    return focusesForRole;
   };
 
   // Convert selectedPositions to the required format
@@ -204,20 +220,6 @@ const SoccerPositionForm = () => {
                   ))}
                 </select>
               </div>
-              <div className="form-group">
-                <label htmlFor="tacticalpreset">Tactical Preset</label>
-                <select
-                  id="tacticalpreset"
-                  name="tacticalpreset"
-                  value={formData.tacticalpreset}
-                  onChange={handleInputChange}
-                  required
-                >
-                  {options.tacticalpreset.map(preset => (
-                    <option key={preset} value={preset}>{preset}</option>
-                  ))}
-                </select>
-              </div>
               <div className="formation-list">
                 <h3>Formations</h3>
                 {Object.keys(formations).map((formation) => (
@@ -257,12 +259,11 @@ const SoccerPositionForm = () => {
                   onChange={handleFocusChange}
                   required
                 >
-                  {focuses.map(focus => (
-                    <option key={focus} value={focus}>{focus}</option>
+                  {validFocuses.map((focus, index) => (
+                    <option key={index} value={focus}>{focus}</option>
                   ))}
                 </select>
               </div>
-              <button onClick={() => setActiveTab('tactic-info')}>Back to Tactic Info</button>
             </div>
           )}
         </div>

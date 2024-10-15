@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import supabase from './supabaseClient'; // Adjust the import if needed
 import './RandomTacticsTable.css'; // Ensure you import the CSS for styling
-import { Link } from 'react-router-dom';
 
 const RandomTacticsTable = () => {
   const [tactics, setTactics] = useState([]);
@@ -25,7 +24,7 @@ const RandomTacticsTable = () => {
       // Fetch a larger set of rows from the table
       const { data, error } = await supabase
         .from('testtable')
-        .select('manager, year, tacticsharecode, formation, club, tacticname') // Use lowercase 'tacticsharecode'
+        .select('manager, year, tacticsharecode, formation, club, tacticname, votes') // Use lowercase 'tacticsharecode'
         .limit(100); // Fetch more than needed for pagination
 
       if (error) throw error;
@@ -94,6 +93,7 @@ const RandomTacticsTable = () => {
                 <th>Tactic Share Code</th>
                 <th>Club</th>
                 <th>Link</th>
+                <th>Votes</th>
               </tr>
             </thead>
             <tbody>
@@ -110,6 +110,7 @@ const RandomTacticsTable = () => {
                   <td className="share-code">{tactic.tacticsharecode}</td>
                   <td>{tactic.club}</td>
                   <td><a href={`/details/${tactic.tacticsharecode}`}>Details</a></td>
+                  <td>{tactic.votes}</td>
                 </tr>
               ))}
             </tbody>

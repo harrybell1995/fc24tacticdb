@@ -9,7 +9,9 @@ const DetailsPage = () => {
   const [tactic, setTactic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('pitch'); // Default to 'pitch'
+  const [activeTab, setActiveTab] = useState('pitch');
+  const [votes, setVotes] = useState(0); // Local state for votes
+  const [hasVoted, setHasVoted] = useState(false); // Track if user has voted
 
   useEffect(() => {
     const fetchTactic = async () => {
@@ -28,6 +30,7 @@ const DetailsPage = () => {
           setError('Multiple tactics found with the given share code.');
         } else {
           setTactic(data[0]);
+          setVotes(data[0].votes || 0); // Load initial votes
         }
       } catch (err) {
         setError(err.message);
@@ -38,6 +41,27 @@ const DetailsPage = () => {
 
     fetchTactic();
   }, [tacticsharecode]);
+
+  const handleVote = async () => {
+    if (hasVoted) return; // Prevent multiple votes
+
+    // Optimistically update the local vote count
+    const newVoteCount = votes + 1;
+    setVotes(newVoteCount);
+    setHasVoted(true);
+
+    // Send the vote to the database
+    const { error } = await supabase
+      .from('testtable')
+      .update({ votes: newVoteCount })  // Update to new vote count
+      .eq('tacticsharecode', tacticsharecode);
+
+    if (error) {
+        console.error('Error updating vote:', error);
+        setVotes(votes); // Revert local vote count on error
+        setHasVoted(false);
+    }
+};
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -66,73 +90,75 @@ const DetailsPage = () => {
   };
 
   return (
-  <div className="soccer-position-form-container">
-    <div className="tactic-row-thingy">
+    <div className="soccer-position-form-container">
+      <div className="tactic-row-thingy">
+        {activeTab === 'pitch' && (
+          <div className="pitch-section">
+            <SoccerPitch selectedPositions={positionsObject} />
+          </div>
+        )}
 
-      {activeTab === 'pitch' && (
-        <div className="pitch-section">
-          <SoccerPitch selectedPositions={positionsObject} />
-        </div>
-      )}
+        {activeTab === 'positions' && (
+          <div className="sidebar">
+            {Object.keys(positionsObject).map((position) => {
+              const { role, focus } = positionsObject[position];
+              return (
+                <div
+                  key={position}
+                  className="position-info"
+                  style={{
+                    backgroundColor: getPositionColor(position),
+                  }}
+                >
+                  <div className="position-abbreviation">
+                    {position.match(/\((.*?)\)/)[1]}
+                  </div>
+                  <div className="position-role">
+                    Role: {role}
+                  </div>
+                  <div className="position-focus">
+                    Focus: {focus}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
-      {activeTab === 'positions' && (
         <div className="sidebar">
-          {Object.keys(positionsObject).map((position) => {
-            const { role, focus } = positionsObject[position];
-            return (
-              <div
-                key={position}
-                className="position-info"
-                style={{
-                  backgroundColor: getPositionColor(position),
-                }}
-              >
-                <div className="position-abbreviation">
-                  {position.match(/\((.*?)\)/)[1]}
-                </div>
-                <div className="position-role">
-                  Role: {role}
-                </div>
-                <div className="position-focus">
-                  Focus: {focus}
-                </div>
+          <div className="view-toggle-width">
+            <div className="view-toggle">
+              <div className={`tab ${activeTab === 'pitch' ? 'active' : ''}`} onClick={() => setActiveTab('pitch')}>
+                Pitch
               </div>
-            );
-          })}
-        </div>
-      )}
-
-      <div className="sidebar">
-      <div className="view-toggle-width">
-        <div className="view-toggle">
-          <div className={`tab ${activeTab === 'pitch' ? 'active' : ''}`} onClick={() => setActiveTab('pitch')}>
-            Pitch
+              <div className={`tab ${activeTab === 'positions' ? 'active' : ''}`} onClick={() => setActiveTab('positions')}>
+                Positions
+              </div>
+            </div>
           </div>
-          <div className={`tab ${activeTab === 'positions' ? 'active' : ''}`} onClick={() => setActiveTab('positions')}>
-            Positions
+
+          <div className="tactic-details">
+            <ul className="tactic-details-list">
+              <li><strong>Manager Name:</strong> {tactic.manager}</li>
+              <li><strong>Year:</strong> {tactic.year}</li>
+              <li><strong>Formation:</strong> {tactic.formation}</li>
+              <li><strong>Club:</strong> {tactic.club}</li>
+              <li><strong>Club Country:</strong> {tactic.clubcountry}</li>
+              <li><strong>League:</strong> {tactic.league}</li>
+              <li><strong></strong> {tactic.notes}</li>
+              <li><strong>Build-up Style:</strong> {tactic.buildupstyle}</li>
+              <li><strong>Defensive Approach:</strong> {tactic.defensiveapproach}</li>
+              <li><strong>Tactic Share Code:</strong> {tactic.tacticsharecode}</li>
+              <li><strong>Votes:</strong> {votes}</li> {/* Display current vote count */}
+              <li>
+                <button onClick={handleVote} disabled={hasVoted}>Vote</button> {/* Voting button */}
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-
-        <div className="tactic-details">
-          <ul className="tactic-details-list">
-            <li><strong>Manager Name:</strong> {tactic.manager}</li>
-            <li><strong>Year:</strong> {tactic.year}</li>
-            <li><strong>Formation:</strong> {tactic.formation}</li>
-            <li><strong>Club:</strong> {tactic.club}</li>
-            <li><strong>Club Country:</strong> {tactic.clubcountry}</li>
-            <li><strong>League:</strong> {tactic.league}</li>
-            <li><strong></strong> {tactic.notes}</li>
-            <li><strong>Tactical Preset:</strong> {tactic.tacticalpreset}</li>
-            <li><strong>Build-up Style:</strong> {tactic.buildupstyle}</li>
-            <li><strong>Defensive Approach:</strong> {tactic.defensiveapproach}</li>
-            <li><strong>Tactic Share Code:</strong> {tactic.tacticsharecode}</li>
-          </ul>
-        </div>
-      </div>
-      </div>
-      </div>
-    );
+    </div>
+  );
 };
 
 export default DetailsPage;
