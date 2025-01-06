@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import supabase from './supabaseClient'; // Adjust the import if needed
 import './RandomTacticsTable.css'; // Ensure you import the CSS for styling
-import { Link } from 'react-router-dom';
 
 const RandomTacticsTable = () => {
   const [tactics, setTactics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const itemsPerPage = 20;
 
   // Function to shuffle array elements
   const shuffleArray = (array) => {
@@ -21,14 +24,17 @@ const RandomTacticsTable = () => {
       // Fetch a larger set of rows from the table
       const { data, error } = await supabase
         .from('testtable')
-        .select('manager, year, tacticsharecode, formation, club') // Use lowercase 'tacticsharecode'
-        .limit(100); // Fetch more than 25
+        .select('manager, year, tacticsharecode, formation, club, tacticname, votes') // Use lowercase 'tacticsharecode'
+        .limit(100); // Fetch more than needed for pagination
 
       if (error) throw error;
 
-      // Shuffle and select 25 random entries
-      const shuffledData = shuffleArray(data).slice(0, 25);
-      setTactics(shuffledData);
+      // Shuffle and paginate data
+      const shuffledData = shuffleArray(data);
+      const totalItems = shuffledData.length;
+      setTotalPages(Math.ceil(totalItems / itemsPerPage));
+      const paginatedData = shuffledData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+      setTactics(paginatedData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -38,7 +44,7 @@ const RandomTacticsTable = () => {
 
   useEffect(() => {
     fetchRandomTactics();
-  }, []);
+  }, [currentPage]);
 
   // Function to determine the decade class
   const getYearClass = (year) => {
@@ -61,6 +67,12 @@ const RandomTacticsTable = () => {
     return '';
   };
 
+  // Handlers for pagination
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   return (
     <div className="random-tactics-table">
@@ -70,34 +82,49 @@ const RandomTacticsTable = () => {
       ) : error ? (
         <p>Error: {error}</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Manager</th>
-              <th>Formation</th>
-              <th>Year</th>
-              <th>Tactic Share Code</th>
-              <th>Club</th>
-              <th>Link</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tactics.map((tactic, index) => (
-              <tr key={index}>
-                <td>{tactic.manager}</td>
-                <td>{tactic.formation}</td> {/* Display the tacticsharecode */}
-                <td className="year-cell">
-                <span className={`year-span ${getYearClass(tactic.year)}`}>
-                  {tactic.year}
-                </span>
-              </td>
-                <td className="share-code">{tactic.tacticsharecode}</td>
-                <td>{tactic.club}</td>
-                <td><a href={`/details/${tactic.tacticsharecode}`}>Details</a></td>
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Tactic Name</th>
+                <th>Manager</th>
+                <th>Formation</th>
+                <th>Year</th>
+                <th>Tactic Share Code</th>
+                <th>Club</th>
+                <th>Link</th>
+                <th>Votes</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {tactics.map((tactic, index) => (
+                <tr key={index}>
+                  <td>{tactic.tacticname}</td>
+                  <td>{tactic.manager}</td>
+                  <td>{tactic.formation}</td>
+                  <td className="year-cell">
+                    <span className={`year-span ${getYearClass(tactic.year)}`}>
+                      {tactic.year}
+                    </span>
+                  </td>
+                  <td className="share-code">{tactic.tacticsharecode}</td>
+                  <td>{tactic.club}</td>
+                  <td><a href={`/details/${tactic.tacticsharecode}`}>Details</a></td>
+                  <td>{tactic.votes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">
+            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span>Page {currentPage} of {totalPages}</span>
+            <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

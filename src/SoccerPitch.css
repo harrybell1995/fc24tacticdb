@@ -1,63 +1,139 @@
-/* SoccerPitch.css */
-
-/* Base styles for the soccer pitch */
+/* Base styles */
 .soccer-pitch {
   position: relative;
-  right: 0;
-  top: 0;
   width: 100%;
-  min-height: 600px; /* Ensures a minimum height */
-  background-color: #1e1e1e; /* Darker background color for night mode */
-  padding: 20px;
-  box-sizing: border-box;
-  overflow: hidden;
+  max-width: 750px; /* Maximum width for PC resembling a football field */
+  height: 100%;
+  max-height: 1200px; /* Proportional height for football field shape */
+  display: flex;
+  margin: 0 auto; /* Center the pitch on PC */
+  background: url('./assets/pitch.png') no-repeat center;
+  background-size: cover;
+  transform: rotateX(5deg); /* Tilt the background image slightly away */
+
 }
 
-/* Styles for the pitch container */
 .pitch {
   position: relative;
   width: 100%;
-  min-height: 600px; /* Ensures a minimum height */
-  background-color: #333; /* Darker background for night mode */
-  border-radius: 10px;
-  padding: 20px;
+  height: 80vh; /* Maintain the height relative to the viewport */
+  background: linear-gradient(
+    rgba(0, 100, 0, 0) ,   /* Fully transparent */
+    rgba(0, 56, 0, 0.8) /* Dark green with opacity */
+  );
+  overflow: hidden;
+  z-index: 1; /* Ensure pitch background is below the positions */
 }
 
-/* Styles for player positions */
+.pitch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1), /* Light color with opacity */
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.2) 10px,
+    rgba(255, 255, 255, 0.2) 20px
+  );
+  opacity: 0.3; /* Adjust the opacity to make the pattern faded */
+  z-index: 1; /* Ensure the pattern is on top of the gradient */
+}
+
+/* Position container */
+.positions-container {
+  position: absolute; /* Or fixed, depending on your layout */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto; /* Ensure positions are clickable */
+  z-index: 2; /* Ensure positions are on top of the pitch */
+}
+
+/* Position divs with hexagonal shape and refined styling */
 .position {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  background-color: #e0e0e0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 4px solid #000;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  color: #000;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Add shadow for better visibility */
-}
-
-/* Hover effect for position */
-.position:hover::after {
-  content: attr(data-role) " - " attr(data-focus);
-  position: absolute;
-  bottom: -30px;
-  background: rgba(0, 0, 0, 0.7);
+  width: 110px; /* Increased width for better visibility */
+  height: 110px; /* Adjusted height to maintain hexagonal proportions */
+  background: linear-gradient(145deg, #2c2c2c, #1a1a1a); /* Subtle dark gradient */
   color: #fff;
-  padding: 5px;
-  border-radius: 3px;
-  white-space: nowrap;
+  clip-path: polygon(
+    50% 0%, 
+    100% 5%, 
+    100% 95%, 
+    50% 100%, 
+    0% 95%, 
+    0% 5%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Add subtle shadow for depth */
+  background-color: #3b3b3b; /* Slightly lighter shade on hover */
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Responsive styles for mobile view */
+.position:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* More pronounced shadow on hover */
+  transform: translateY(-5px); /* Adds lift effect on hover */
+}
+
+/* Selected position with more distinct styling */
+.position.selected {
+  background-color: #4caf50; /* A softer green to indicate selection */
+  border-color: #4caf50;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Stronger shadow for emphasis */
+  opacity: 1;
+  transform: scale(1.5); /* Scale the card when selected */
+  z-index: 10; /* Ensure it's on top of others */
+}
+
+/* Refined typography and layout for the position information */
+.position-info {
+  text-align: center;
+  padding: 5px 0; /* Added padding for better text positioning */
+}
+
+.position-abbreviation {
+  font-size: 16px; /* Increased font size for better readability */
+  font-weight: bold;
+  color: #ffdb4d; /* Brighter color to match the selected state */
+}
+
+.position-separator {
+  width: 80%;
+  height: 1px;
+  background-color: #fff;
+  opacity: 0.7; /* Slightly transparent separator for a cleaner look */
+  margin: 8px 0;
+}
+
+.position-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Added spacing between role and focus */
+}
+
+.role, .focus {
+  font-size: 13px; /* Adjusted font size for better legibility */
+  color: #d0d0d0; /* Softer gray for role and focus text */
+}
+
+/* Make cards narrower and responsive on mobile */
 @media (max-width: 768px) {
   .soccer-pitch {
+<<<<<<< HEAD
     width: 100%; /* Full width on mobile */
     height: 50%; /* Adjust height for mobile view */
   }
@@ -68,15 +144,61 @@
 
   .pitch-section {
     width: 100%; /* Full height of the container */
+=======
+    width: 100%;
+    max-width: none; /* Make pitch 100% of mobile width */
+>>>>>>> 4f12d7360791493bb811dbed4dbbb73fe05e5b06
   }
 
   .position {
-    width: 30px; /* Smaller circles on mobile */
-    height: 30px;
-    font-size: 12px; /* Smaller font size */
+    width: 80px; /* Make the card narrower */
+    height: 100px; /* Adjust height */
+    transition: all 0.3s ease; /* Smooth transition for any changes */
   }
 
-  .position:hover::after {
-    font-size: 10px; /* Smaller tooltip font size */
+  /* When a card is clicked, it expands and other cards shrink */
+  .position.selected {
+    width: 120px; /* Expand when selected */
+    height: 150px;
+    z-index: 10; /* Bring to front */
+    transform: scale(1.2); /* Slight enlargement */
   }
+
+  .position:not(.selected) {
+    opacity: 0.9; /* Fade other cards */
+  }
+
+  /* Handle long text overflow on mobile */
+  .position .role, .position .focus {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center; /* Center align by default */
+  }
+
+  .position .role.long-text, .position .focus.long-text {
+    text-align: left;
+    padding-left: 5px;
+  }
+
+  .pitch-section{
+    width: 100%;
+    margin-left: 0px;
+  }
+
+  .tactic-row-thingy{
+    padding: px;
+  }
+}
+
+
+.formation-name {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  font-size: 24px; /* Adjust size as needed */
+  font-weight: bold;
+  color: #fff; /* Adjust color as needed */
+  background: rgba(0, 0, 0, 0.5); /* Optional: Adds a background for better visibility */
+  padding: 5px; /* Optional: Adds padding around the text */
 }

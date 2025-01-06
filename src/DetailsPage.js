@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import supabase from './supabaseClient';
 import SoccerPitch from './SoccerPitch';
+import './SoccerPositionForm.css';
 
 const DetailsPage = () => {
   const { tacticsharecode } = useParams();
   const [tactic, setTactic] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('pitch');
+  const [votes, setVotes] = useState(0); // Local state for votes
+  const [hasVoted, setHasVoted] = useState(false); // Track if user has voted
 
   useEffect(() => {
     const fetchTactic = async () => {
@@ -26,6 +30,7 @@ const DetailsPage = () => {
           setError('Multiple tactics found with the given share code.');
         } else {
           setTactic(data[0]);
+          setVotes(data[0].votes || 0); // Load initial votes
         }
       } catch (err) {
         setError(err.message);
@@ -37,116 +42,121 @@ const DetailsPage = () => {
     fetchTactic();
   }, [tacticsharecode]);
 
+  const handleVote = async () => {
+    if (hasVoted) return; // Prevent multiple votes
+
+    // Optimistically update the local vote count
+    const newVoteCount = votes + 1;
+    setVotes(newVoteCount);
+    setHasVoted(true);
+
+    // Send the vote to the database
+    const { error } = await supabase
+      .from('testtable')
+      .update({ votes: newVoteCount })  // Update to new vote count
+      .eq('tacticsharecode', tacticsharecode);
+
+    if (error) {
+        console.error('Error updating vote:', error);
+        setVotes(votes); // Revert local vote count on error
+        setHasVoted(false);
+    }
+};
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   if (!tactic) return <p>No tactic found</p>;
 
-  // Ensure that tactic.positions is parsed correctly
-  const positions = typeof tactic.positions === 'string' ? JSON.parse(tactic.positions) : tactic.positions;
+  let positions = typeof tactic.positions === 'string' ? JSON.parse(tactic.positions) : tactic.positions;
 
-  // Convert positions array to an object for SoccerPitch component
-  const positionsObject = positions.reduce((acc, { position, role, focus }) => {
-    acc[position] = { role, focus };
+  if (typeof positions !== 'object' || Array.isArray(positions)) {
+    console.error("Expected 'positions' to be an object but got:", positions);
+    positions = {}; // Set default to empty object
+  }
+
+  const positionsObject = Object.keys(positions).reduce((acc, position) => {
+    const roles = positions[position];
+    acc[position] = { role: roles[0] || 'No Role', focus: roles[1] || 'No Focus' };
     return acc;
   }, {});
 
-  // Define colors for each position
   const getPositionColor = (position) => {
-    if (position.includes('Goalkeeper')) return 'rgba(255, 0, 0, 0.2)'; // Red
-    if (position.includes('Back') || position.includes('Center Back')) return 'rgba(255, 165, 0, 0.2)'; // Orange
-    if (position.includes('Midfielder')) return 'rgba(0, 128, 0, 0.2)'; // Green
-    if (position.includes('Winger') || position.includes('Striker')) return 'rgba(0, 0, 255, 0.2)'; // Blue
-    return 'rgba(0, 0, 0, 0.1)'; // Default light gray
+    if (position.includes('Goalkeeper')) return 'rgba(255, 0, 0, 0.2)';
+    if (position.includes('Back') || position.includes('Center Back')) return 'rgba(255, 165, 0, 0.2)';
+    if (position.includes('Midfielder')) return 'rgba(0, 128, 0, 0.2)';
+    if (position.includes('Winger') || position.includes('Striker')) return 'rgba(0, 0, 255, 0.2)';
+    return 'rgba(0, 0, 0, 0.1)';
   };
 
   return (
-    <div className="details-page-container">
-      <div className="tactic-content">
-        <div className="tactic-details">
-          <div className="detail-box">
-            <span className="primary-text">{tactic.manager}</span>
-            <span className="secondary-text">Manager</span>
+    <div className="soccer-position-form-container">
+      <div className="tactic-row-thingy">
+        {activeTab === 'pitch' && (
+          <div className="pitch-section">
+            <SoccerPitch selectedPositions={positionsObject} />
           </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.year}</span>
-            <span className="secondary-text">Year</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.formation}</span>
-            <span className="secondary-text">Formation</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.club}</span>
-            <span className="secondary-text">Club</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.clubcountry}</span>
-            <span className="secondary-text">Club Country</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.league}</span>
-            <span className="secondary-text">League</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.tacticalpreset}</span>
-            <span className="secondary-text">Tactical Preset</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.buildupstyle}</span>
-            <span className="secondary-text">Build-up Style</span>
-          </div>
-          <div className="detail-box">
-            <span className="primary-text">{tactic.defensiveapproach}</span>
-            <span className="secondary-text">Defensive Approach</span>
-          </div>
-          <div className="detail-box">
-            <div className="tactic-share-code">
-              <span className="primary-text">{tactic.tacticsharecode}</span>
-              <span className="secondary-text">Tactic Share Code</span>
-            </div>
-          </div>
-        </div>
-      {/* Positions Display */}
-      <div className="positions-display">
-        {Object.keys(positionsObject).map((position) => {
-          const { role, focus } = positionsObject[position];
-          return (
-            <div
-              key={position}
-              className="position-info"
-              style={{
-                backgroundColor: getPositionColor(position),
-                padding: '10px',
-                margin: '5px',
-                borderRadius: '5px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                fontWeight: 'bold',
-              }}
-            >
-              <div className="position-abbreviation">
-                {position.match(/\((.*?)\)/)[1]} {/* Display only the abbreviation */}
-              </div>
-              <div className="position-role">
-                Role: {role + "  " || 'No Role'}
-                Focus: {focus || 'No Focus'}
-              </div>
-              <div className="position-focus">
-                
-              </div>
-              
-            </div>
-            
-          );
-        })}
-      </div>      <div className="tactic-pitch">
-          <SoccerPitch selectedPositions={positionsObject} />
-        </div>
+        )}
 
+        {activeTab === 'positions' && (
+          <div className="sidebar">
+            {Object.keys(positionsObject).map((position) => {
+              const { role, focus } = positionsObject[position];
+              return (
+                <div
+                  key={position}
+                  className="position-info"
+                  style={{
+                    backgroundColor: getPositionColor(position),
+                  }}
+                >
+                  <div className="position-abbreviation">
+                    {position.match(/\((.*?)\)/)[1]}
+                  </div>
+                  <div className="position-role">
+                    Role: {role}
+                  </div>
+                  <div className="position-focus">
+                    Focus: {focus}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="sidebar">
+          <div className="view-toggle-width">
+            <div className="view-toggle">
+              <div className={`tab ${activeTab === 'pitch' ? 'active' : ''}`} onClick={() => setActiveTab('pitch')}>
+                Pitch
+              </div>
+              <div className={`tab ${activeTab === 'positions' ? 'active' : ''}`} onClick={() => setActiveTab('positions')}>
+                Positions
+              </div>
+            </div>
+          </div>
+
+          <div className="tactic-details">
+            <ul className="tactic-details-list">
+              <li><strong>Manager Name:</strong> {tactic.manager}</li>
+              <li><strong>Year:</strong> {tactic.year}</li>
+              <li><strong>Formation:</strong> {tactic.formation}</li>
+              <li><strong>Club:</strong> {tactic.club}</li>
+              <li><strong>Club Country:</strong> {tactic.clubcountry}</li>
+              <li><strong>League:</strong> {tactic.league}</li>
+              <li><strong></strong> {tactic.notes}</li>
+              <li><strong>Build-up Style:</strong> {tactic.buildupstyle}</li>
+              <li><strong>Defensive Approach:</strong> {tactic.defensiveapproach}</li>
+              <li><strong>Tactic Share Code:</strong> {tactic.tacticsharecode}</li>
+              <li><strong>Votes:</strong> {votes}</li> {/* Display current vote count */}
+              <li>
+                <button onClick={handleVote} disabled={hasVoted}>Vote</button> {/* Voting button */}
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-
     </div>
   );
 };

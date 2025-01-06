@@ -6,23 +6,27 @@ const RandomPosition = () => {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(20);
+  const [totalRows, setTotalRows] = useState(0);
 
-  const fetchRandomPosition = async () => {
+  const fetchPaginatedData = async (page = 1) => {
     try {
       setLoading(true);
 
-      // Fetch all rows from the table
-      const { data, error } = await supabase
+      // Fetch paginated rows from the table
+      const { data, error, count } = await supabase
         .from('testtable')
-        .select('*');
+        .select('*', { count: 'exact' })
+        .range((page - 1) * rowsPerPage, page * rowsPerPage - 1);
 
       if (error) throw error;
 
-      // Ensure there's at least one row
+      // Update state with paginated data
+      setTotalRows(count);
       if (data.length > 0) {
-        // Get a random index
+        // Get a random index within the current page's data
         const randomIndex = Math.floor(Math.random() * data.length);
-
         // Parse the 'positions' JSON and update state
         setPositions(data[randomIndex].positions || []);
       }
@@ -34,8 +38,20 @@ const RandomPosition = () => {
   };
 
   useEffect(() => {
-    fetchRandomPosition();
-  }, []);
+    fetchPaginatedData(currentPage);
+  }, [currentPage]);
+
+  const handleNextPage = () => {
+    if (currentPage * rowsPerPage < totalRows) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
 
   return (
     <div>
@@ -50,7 +66,12 @@ const RandomPosition = () => {
           return acc;
         }, {})} />
       )}
-      <button onClick={fetchRandomPosition}>Get Another Random Position</button>
+      <button onClick={fetchPaginatedData}>Get Random Position</button>
+      <div>
+        <button onClick={handlePreviousPage} disabled={currentPage === 1}>Previous</button>
+        <span> Page {currentPage} </span>
+        <button onClick={handleNextPage} disabled={currentPage * rowsPerPage >= totalRows}>Next</button>
+      </div>
     </div>
   );
 };

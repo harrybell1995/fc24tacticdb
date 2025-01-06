@@ -4,7 +4,7 @@ import './RandomTacticsTable.css'; // Ensure you import the CSS for styling
 import { useParams, Link } from 'react-router-dom';
 
 // Define your options here
-const DECADES = ['1980s', '1990s', '2000s', '2010s', '2020s'];
+const DECADES = ['1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020s'];
 
 const FormationsByDecade = () => {
   const { decade } = useParams(); // Get the decade from the URL
@@ -94,7 +94,7 @@ const FormationsByDecade = () => {
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
-        <p>Error: {error}</p>
+        <p>Error: {error} </p>
       ) : (
         <table>
           <thead>
@@ -104,7 +104,7 @@ const FormationsByDecade = () => {
               <th>Year</th>
               <th>Tactic Share Code</th>
               <th>Club</th>
-              <th>Link</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody>
