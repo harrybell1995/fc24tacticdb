@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import supabase from './supabaseClient';
 import SoccerPitch from './SoccerPitch'; // Import the SoccerPitch component
+import formationTemplates from './formationtemplates'; // Import formation templates
 
 const positions = [
-  'Goalkeeper (GK)',
-  'Center Back (CB)', 'Left Center Back (LCB)', 'Right Center Back (RCB)',
-  'Left Back (LB)', 'Right Back (RB)',
-  'Defensive Midfielder (CDM)', 'Left Defensive Midfielder (LDM)', 'Right Defensive Midfielder (RDM)',
+  'Goalkeeper (GK)', 'Center Back (CB)', 'Left Center Back (LCB)', 'Right Center Back (RCB)',
+  'Left Back (LB)', 'Right Back (RB)', 'Defensive Midfielder (CDM)', 'Left Defensive Midfielder (LDM)', 'Right Defensive Midfielder (RDM)',
   'Central Midfielder (CM)', 'Left Central Midfielder (LCM)', 'Right Central Midfielder (RCM)',
   'Left Midfielder (LM)', 'Right Midfielder (RM)', 'Attacking Midfielder (CAM)', 'Left Attacking Midfielder (LCAM)', 'Right Attacking Midfielder (RCAM)',
   'Left Winger (LW)', 'Right Winger (RW)', 'Striker (ST)', 'Left Striker (LST)', 'Right Striker (RST)',
@@ -32,66 +31,54 @@ const roles = {
   'Right Midfielder (RM)': ['Winger', 'Wide Midfielder', 'Wide Playmaker', 'Inside Forward'],
   'Left Winger (LW)': ['Winger', 'Inside Forward', 'Wide Playmaker'],
   'Right Winger (RW)': ['Winger', 'Inside Forward', 'Wide Playmaker'],
-  'Striker (ST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward'],
-  'Left Striker (LST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward'],
-  'Right Striker (RST)': ['Advance Forward', 'Poacher', 'False 9', 'Target Forward']
+  'Striker (ST)': ['Advanced Forward', 'Poacher', 'False 9', 'Target Forward'],
+  'Left Striker (LST)': ['Advanced Forward', 'Poacher', 'False 9', 'Target Forward'],
+  'Right Striker (RST)': ['Advanced Forward', 'Poacher', 'False 9', 'Target Forward']
 };
 
 const focuses = ['Balanced', 'Defend', 'Attack', 'Build-Up', 'Roaming', 'Complete', 'Wide'];
 
 const options = {
-  tacticalpreset: [
-    'Balanced', 
-    'Long Ball', 
-    'Wing Play', 
-    'Tiki Taka', 
-    'Pressing', 
-    'Park the Bus', 
-    'Counter Attack'
-  ],
-  buildupstyle: [
-    'Balanced', 
-    'Counter', 
-    'Short Passing'
-  ],
-  defensiveapproach: [
-    'Deep', 
-    'Normal', 
-    'High', 
-    'Aggressive'
-  ]
+  tacticalpreset: ['Balanced', 'Long Ball', 'Wing Play', 'Tiki Taka', 'Pressing', 'Park the Bus', 'Counter Attack'],
+  buildupstyle: ['Balanced', 'Counter', 'Short Passing'],
+  defensiveapproach: ['Deep', 'Normal', 'High', 'Aggressive']
+};
+
+const initialFormData = {
+  manager: '',
+  year: '',
+  tacticsharecode: '',
+  buildupstyle: options.buildupstyle[0],
+  defensiveapproach: options.defensiveapproach[0],
+  clubcountry: '',
+  league: '',
+  tacticalpreset: options.tacticalpreset[0],
+  tacticname: '',
+  notes: '',
+  formation: ''
 };
 
 const SoccerPositionForm = () => {
   const [selectedPositions, setSelectedPositions] = useState({});
-  const [formData, setFormData] = useState({
-    manager: '',
-    year: '',
-    tacticsharecode: '',
-    buildupstyle: options.buildupstyle[0],
-    defensiveapproach: options.defensiveapproach[0],
-    clubcountry: '',
-    league: '',
-    tacticalpreset: options.tacticalpreset[0]
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   const getPositionColor = (position) => {
-    if (position.includes('Goalkeeper')) return 'rgba(255, 0, 0, 0.2)'; // Red
-    if (position.includes('Back') || position.includes('Center Back')) return 'rgba(255, 165, 0, 0.2)'; // Orange
-    if (position.includes('Midfielder')) return 'rgba(0, 128, 0, 0.2)'; // Green
-    if (position.includes('Winger') || position.includes('Striker')) return 'rgba(0, 0, 255, 0.2)'; // Blue
-    return 'rgba(0, 0, 0, 0.1)'; // Default light gray
+    if (position.includes('Goalkeeper')) return 'rgba(255, 0, 0, 0.2)';
+    if (position.includes('Back') || position.includes('Center Back')) return 'rgba(255, 165, 0, 0.2)';
+    if (position.includes('Midfielder')) return 'rgba(0, 128, 0, 0.2)';
+    if (position.includes('Winger') || position.includes('Striker')) return 'rgba(0, 0, 255, 0.2)';
+    return 'rgba(0, 0, 0, 0.1)';
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleInputChange = ({ target: { name, value } }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleOptionChange = (name, direction) => {
-    const currentIndex = options[name].indexOf(formData[name]);
-    const newIndex = (currentIndex + direction + options[name].length) % options[name].length;
-    setFormData(prev => ({ ...prev, [name]: options[name][newIndex] }));
+    const optionsList = options[name];
+    const currentIndex = optionsList.indexOf(formData[name]);
+    const newIndex = (currentIndex + direction + optionsList.length) % optionsList.length;
+    setFormData(prev => ({ ...prev, [name]: optionsList[newIndex] }));
   };
 
   const handleCheckboxChange = (position) => {
@@ -108,23 +95,40 @@ const SoccerPositionForm = () => {
     }));
   };
 
+  const handleFormationChange = (formation) => {
+    setFormData(prev => ({ ...prev, formation }));
+    setSelectedPositions(formationTemplates[formation] || {});
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const selectedPositionsList = Object.keys(selectedPositions).filter(
-      (key) => selectedPositions[key]
-    );
+    // Check if all required fields are filled
+    const requiredFields = ['manager', 'year', 'tacticsharecode', 'clubcountry', 'league', 'tacticname', 'formation'];
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        alert(`Please fill out the ${field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} field.`);
+        return;
+      }
+    }
+
+    // Check if at least one position is selected
+    const selectedPositionsList = Object.keys(selectedPositions).filter(key => selectedPositions[key]);
+    if (selectedPositionsList.length === 0) {
+      alert('Please select at least one position.');
+      return;
+    }
 
     try {
       const { data, error } = await supabase
         .from('testtable')
-        .insert([{ 
+        .insert([{
           positions: JSON.stringify(selectedPositionsList.map(key => ({
             position: key,
             role: selectedPositions[key].role,
             focus: selectedPositions[key].focus
-          }))), 
-          ...formData 
+          }))),
+          ...formData
         }]);
 
       if (error) {
@@ -132,16 +136,7 @@ const SoccerPositionForm = () => {
       } else {
         console.log('Data inserted successfully:', data);
         setSelectedPositions({});
-        setFormData({
-          manager: '',
-          year: '',
-          tacticsharecode: '',
-          buildupstyle: options.buildupstyle[0],
-          defensiveapproach: options.defensiveapproach[0],
-          clubcountry: '',
-          league: '',
-          tacticalpreset: options.tacticalpreset[0]
-        });
+        setFormData(initialFormData);
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -152,50 +147,58 @@ const SoccerPositionForm = () => {
     <div className="details-page-container">
       <div className="tactic-content">
         <div className="tactic-details">
-          {['manager', 'year', 'tacticsharecode', 'clubcountry', 'league'].map(field => (
+          {['manager', 'year', 'tacticsharecode', 'clubcountry', 'league', 'tacticname'].map(field => (
             <div key={field} className="detail-box">
-              <label>
-                <input
-                  type="text"
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleInputChange}
-                  placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`}
-                />
+              <label className="detail-label">
                 <span className="secondary-text">{field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
               </label>
+              <input
+                type="text"
+                name={field}
+                value={formData[field]}
+                onChange={handleInputChange}
+                placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}`}
+              />
             </div>
           ))}
           <div className="detail-box">
-            <label>
-              <span className="secondary-text">Tactical Preset</span>
-              <div className="option-selector">
-                <button onClick={() => handleOptionChange('tacticalpreset', -1)}>&lt;</button>
-                <span>{formData.tacticalpreset}</span>
-                <button onClick={() => handleOptionChange('tacticalpreset', 1)}>&gt;</button>
-              </div>
+            <label className="detail-label">
+              <span className="secondary-text">Notes</span>
             </label>
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleInputChange}
+              placeholder="Enter Notes"
+            />
           </div>
           <div className="detail-box">
-            <label>
-              <span className="secondary-text">Build Up Style</span>
-              <div className="option-selector">
-                <button onClick={() => handleOptionChange('buildupstyle', -1)}>&lt;</button>
-                <span>{formData.buildupstyle}</span>
-                <button onClick={() => handleOptionChange('buildupstyle', 1)}>&gt;</button>
-              </div>
+            <label className="detail-label">
+              <span className="secondary-text">Formation</span>
             </label>
+            <select
+              name="formation"
+              value={formData.formation}
+              onChange={({ target: { value } }) => handleFormationChange(value)}
+            >
+              <option value="">Select Formation</option>
+              {Object.keys(formationTemplates).map(formation => (
+                <option key={formation} value={formation}>{formation}</option>
+              ))}
+            </select>
           </div>
-          <div className="detail-box">
-            <label>
-              <span className="secondary-text">Defensive Approach</span>
+          {['tacticalpreset', 'buildupstyle', 'defensiveapproach'].map(option => (
+            <div className="detail-box" key={option}>
+              <label className="detail-label">
+                <span className="secondary-text">{option.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
+              </label>
               <div className="option-selector">
-                <button onClick={() => handleOptionChange('defensiveapproach', -1)}>&lt;</button>
-                <span>{formData.defensiveapproach}</span>
-                <button onClick={() => handleOptionChange('defensiveapproach', 1)}>&gt;</button>
+                <button onClick={() => handleOptionChange(option, -1)}>&lt;</button>
+                <span>{formData[option]}</span>
+                <button onClick={() => handleOptionChange(option, 1)}>&gt;</button>
               </div>
-            </label>
-          </div>
+            </div>
+          ))}
         </div>
         <div className="tactic-pitch">
           <SoccerPitch selectedPositions={selectedPositions} />
@@ -221,31 +224,29 @@ const SoccerPositionForm = () => {
                 />
                 {position}
               </label>
-              <div
-                className={`dropdown-container ${selectedPositions[position] ? 'expanded' : ''}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {selectedPositions[position] && (
-                  <>
-                    <select
-                      value={selectedPositions[position].role}
-                      onChange={(e) => handleSelectChange(position, 'role', e.target.value)}
-                    >
-                      {roles[position].map(role => (
-                        <option key={role} value={role}>{role}</option>
-                      ))}
-                    </select>
-                    <select
-                      value={selectedPositions[position].focus}
-                      onChange={(e) => handleSelectChange(position, 'focus', e.target.value)}
-                    >
-                      {focuses.map(focus => (
-                        <option key={focus} value={focus}>{focus}</option>
-                      ))}
-                    </select>
-                  </>
-                )}
-              </div>
+              {selectedPositions[position] && (
+                <div
+                  className="dropdown-container expanded"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <select
+                    value={selectedPositions[position].role}
+                    onChange={({ target: { value } }) => handleSelectChange(position, 'role', value)}
+                  >
+                    {roles[position].map(role => (
+                      <option key={role} value={role}>{role}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedPositions[position].focus}
+                    onChange={({ target: { value } }) => handleSelectChange(position, 'focus', value)}
+                  >
+                    {focuses.map(focus => (
+                      <option key={focus} value={focus}>{focus}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
           ))}
         </div>

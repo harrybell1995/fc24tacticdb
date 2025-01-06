@@ -63,7 +63,11 @@
   }
 
   .pitch {
-    height: 100%; /* Full height of the container */
+    width: 100%; /* Full height of the container */
+  }
+
+  .pitch-section {
+    width: 100%; /* Full height of the container */
   }
 
   .position {
